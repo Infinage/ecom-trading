@@ -1,0 +1,9 @@
+1. Create backend for user login func with JWT, BcyrptJS (user), cart: CUSTOMER
+2. Create backend for adding products: ADMIN
+3. Study react front end logic already written
+4. Remove react code logic with proper backend logic
+
+5. Create error middlewares with proper error code / messages - backend
+6. Create error pages - frontend
+
+==============

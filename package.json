@@ -1,0 +1,17 @@
+{
+  "name": "ecom-shopping",
+  "version": "1.0.0",
+  "description": "ECart Shopping",
+  "scripts": {
+    "backend:dev": "npm run dev -w back-end",
+    "frontend:dev": "npm run dev -w front-end",
+    "dev": "npm run backend:dev & npm run frontend:dev"
+  },
+  "keywords": [],
+  "author": "Naresh Jagadeesan & Vijayakumar Jothiramalingam",
+  "license": "ISC",
+  "workspaces": [
+    "back-end",
+    "front-end"
+  ]
+}
