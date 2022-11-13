@@ -8,8 +8,6 @@ const Cart = () => {
   const state = useSelector((state) => state.handleCart);
   const userState = useSelector((state) => state.handleUser);
   const dispatch = useDispatch();
-  console.log(userState);
-  console.log(state);
 
   const handleAdd = (item) => {
     dispatch(addCart(item));
@@ -83,7 +81,7 @@ const Cart = () => {
                         <img
                           src={product.image}
                           className="img-fluid img-thumbnail"
-                          alt={product.id}
+                          alt={product._id}
                         />
                       </td>
                       <td>{product.title}</td>

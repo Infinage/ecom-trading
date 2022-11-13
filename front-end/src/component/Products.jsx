@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 
 const Products = () => {
   const [data, setData] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
   let componentMounted = true;
@@ -19,11 +20,13 @@ const Products = () => {
     const getProducts = async () => {
       setLoading(true);
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products`);
+      const categoryResp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/category`);
+
       if (componentMounted) {
-        setData(await response.clone().json());
-        setFilter(await response.json());
+        setData((await response.clone().json())['data']);
+        setFilter((await response.json())['data']);
+        setCategories((await categoryResp.json())['data']);
         setLoading(false);
-        console.log(filter);
       }
 
       return () => {
@@ -71,37 +74,25 @@ const Products = () => {
           >
             All
           </button>
-          <button
-            className="btn btn-outline-dark m-2  px-2 "
-            onClick={() => filterProduct("men's clothing")}
-          >
-            Men's Clothing
-          </button>
-          <button
-            className="btn btn-outline-dark m-2  px-2"
-            onClick={() => filterProduct("women's clothing")}
-          >
-            Women's Clothing
-          </button>
-          <button
-            className="btn btn-outline-dark  m-2  px-2"
-            onClick={() => filterProduct('jewelery')}
-          >
-            Jewelery
-          </button>
-          <button
-            className="btn btn-outline-dark m-2  px-2"
-            onClick={() => filterProduct('electronics')}
-          >
-            Electronic
-          </button>
+          {
+            categories.map((cat, index) => {
+              return (
+                <button 
+                  key={index}
+                  className="btn btn-outline-dark m-2  px-2 "
+                  onClick={() => filterProduct(cat)}
+                >
+                  {cat}
+                </button>
+              )
+            })
+          }
         </div>
         {filter.map((product) => {
           return (
-            <>
               <div
                 className="col-md-3 mb-4"
-                key={product.id}
+                key={product._id}
                 style={{ padding: '20px' }}
               >
                 <div className="card h-100 text-center p-4">
@@ -129,7 +120,7 @@ const Products = () => {
                     </div>
                     <div className="col">
                       <NavLink
-                        to={`/products/${product.id}`}
+                        to={`/products/${product._id}`}
                         className="btn btn-outline-dark mx-2 px-2"
                       >
                         Details..
@@ -138,7 +129,6 @@ const Products = () => {
                   </div>
                 </div>
               </div>
-            </>
           );
         })}
       </>

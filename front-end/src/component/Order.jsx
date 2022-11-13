@@ -88,7 +88,6 @@ const Order = () => {
     if (state !== undefined && state !== null && state !== []) {
       let grandTot = 0;
       state.map((element) => (grandTot += element.price * element.quantity));
-      //console.log(grandTot - tempCoupon);
       setSubTotal(grandTot - tempCoupon);
     }
   };
@@ -138,9 +137,9 @@ const Order = () => {
                           (product) => (
                             console.log(product),
                             (
-                              <tbody key={product.id}>
+                              <tbody key={product._id}>
                                 <tr>
-                                  <th scope="row">{product.id}</th>
+                                  <th scope="row">{product._id}</th>
                                   <td>{product.title}</td>
                                   <td>{product.quantity}</td>
                                   <td>$ {product.price}</td>

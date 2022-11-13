@@ -12,25 +12,34 @@ const ProductSchema = new mongoose.Schema({
         validate: {
             validator: ele => ele > 0,
             message: "Price must be positive: {VALUE}"
-        }
+        },
+        required: true
     },
 
     description: String,
 
     category: {
         type: String,
-        enum: ["Men's Clothing", "Women's Clothing", "Jewelery", "Electronic"]
+        enum: ["Apparel", "Electronics", "Furniture", "Utensils", "Other"],
+        required: true
     },
 
-    image: String,
+    image: {
+        type: String,
+        default: process.env.DEFAULT_IMAGE_URL
+    },
 
-    rating: [{
-        rate: Number,
-        count: {
-            type: Number,
-            validate: val => val > 0 && Number.isInteger(val)
-        }
-    }]
+    count: {
+        type: Number,
+        validate: cnt => Number.isInteger(cnt) && cnt >= 0,
+        default: 1
+    },
+
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    }
 
 }, {timestamps: true});
 
