@@ -1,3 +1,5 @@
+### TODO
+
 1. Create backend for user login func with JWT, BcyrptJS (user), cart
     - After products are confirmed by buyer, seller should receive a mail and contents from his inventory be reduced
 2. Create backend for adding products
@@ -9,14 +11,14 @@
 7. Switch from buyer to seller perspective from the front end
 8. Settings page to update self (user) details
 
-==============
+***
 
-DB Structure:
+### DB Structure:
 
 user: name, email, password, rating, endorsements, cart[products], offerings[products]
 product: title, price, description, category, image, count, user
 
-Functionalities:
+#### Functionalities:
 
 0. Register an user
 1. Login as a user
