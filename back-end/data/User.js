@@ -49,9 +49,15 @@ const UserSchema = new mongoose.Schema({
     }], 
 
     cart: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        default: []
+        product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+        },
+        quantity: {
+            type: Number,
+            validate: ele => ele > 0,
+        },
+        _id: false,
     }], 
 
     offerings: [{
@@ -62,7 +68,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Before saving the password to DB, hash it
-UserSchema.pre("save", async function () {
+UserSchema.pre("create", async function () {
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
 });
@@ -70,7 +76,7 @@ UserSchema.pre("save", async function () {
 // Create a JWT token - We have the ID, name & Cart details in JWT
 UserSchema.methods.createJWT = function () {
     return jwt.sign(
-        { userId: this._id, name: this.name, cart: this.cart},
+        { userId: this._id, name: this.name, cartCount: this.cart.length},
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_LIFETIME }
       );

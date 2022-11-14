@@ -25,7 +25,7 @@ const authMiddleware = async (req, res, next) => {
         const payload = jwt.verify(token, process.env.JWT_SECRET)
         
         // attach the user to the job routes
-        req.user = { userId: payload.userId, name: payload.name, cart: payload.cart};
+        req.user = { userId: payload.userId, name: payload.name, cartCount: payload.cartCount};
         next()
 
     } catch (error) {

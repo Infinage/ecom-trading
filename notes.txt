@@ -18,11 +18,12 @@ product: title, price, description, category, image, count, user
 
 Functionalities:
 
-0. Register / update a user
+0. Register an user
 1. Login as a user
-2. List all offerings of a user
-1. Add / update an offering
+3. List all offerings of a user
+4. Add / update an offering
+5. Add / remove product to user-cart
 
-2. Add / remove product to user-cart
 3. Buy products: Decrement user-offering-product_count accordingly, create invoice (PDF) & send mail to both parties
 4. Add / Update / Remove Endorsements for a seller
+5. update a user

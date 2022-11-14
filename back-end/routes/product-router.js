@@ -6,6 +6,7 @@ const {
     getProductById, 
     updateOffering, 
     getAllProductCategories,
+    addCart,
     getProductsByCategory
 } = require("../controllers/product-controller");
 
