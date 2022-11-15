@@ -4,12 +4,13 @@ import 'bs-stepper/dist/css/bs-stepper.min.css';
 import Stepper from 'bs-stepper';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { orderProduct,delTotCart } from '../redux/action';
+import { handleOrder } from '../redux/slices/order-slice';
+import { delTotCart } from '../redux/slices/cart-slice';
 
 const Shipping = () => {
   const navigate = useNavigate();
-  const userState = useSelector((state) => state.handleUser);
-  const state = useSelector((state) => state.handleCart);
+  const userState = useSelector((state) => state.user);
+  const cartState = useSelector((state) => state.cart);
   const dispatch = useDispatch();
 
   const [step, setStep] = useState(null);
@@ -31,7 +32,7 @@ const Shipping = () => {
   };
 
   const handleSubmit = () => {
-    dispatch(orderProduct(state));
+    dispatch(handleOrder(cartState));
     dispatch(delTotCart());
     navigate('/order');
   };

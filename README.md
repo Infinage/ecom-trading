@@ -2,14 +2,16 @@
 
 1. Create backend for user login func with JWT, BcyrptJS (user), cart
     - After products are confirmed by buyer, seller should receive a mail and contents from his inventory be reduced
-2. Create backend for adding products
+
+2. If multiple items exist in cart and decrement is clicked then the entire items are removed - Fix it
 3. Study react front end logic already written
 4. Remove react code logic with proper backend logic
-
 5. Create error middlewares with proper error code / messages - backend
 6. Create error pages - frontend
 7. Switch from buyer to seller perspective from the front end
 8. Settings page to update self (user) details
+
+Login Using Redux Toolkit: https://www.bezkoder.com/react-redux-login-example-toolkit-hooks/
 
 ***
 

@@ -6,8 +6,7 @@ const Login = () => {
   const [name, setName] = useState();
   const [password, setPassword] = useState();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.handleUser);
-  console.log(user);
+  const user = useSelector((state) => state.user);
 
   const handleSubmit = () => {
     if (user == null) {

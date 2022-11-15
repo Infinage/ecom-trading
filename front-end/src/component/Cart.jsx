@@ -1,12 +1,13 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import { addCart, delCart } from '../redux/action';
+import { addCart, delCart } from '../redux/slices/cart-slice';
+
 import cart from '../assets/cart.svg';
 
 const Cart = () => {
-  const state = useSelector((state) => state.handleCart);
-  const userState = useSelector((state) => state.handleUser);
+  const cartState = useSelector((state) => state.cart);
+  const userState = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const handleAdd = (item) => {
@@ -74,7 +75,7 @@ const Cart = () => {
                     <th scope="col">Add/Del</th>
                   </tr>
                 </thead>
-                {state.map((product) => (
+                {cartState.map((product) => (
                   <tbody>
                     <tr>
                       <td style={{ width: '100px' }}>
@@ -140,9 +141,9 @@ const Cart = () => {
 
   return (
     <div>
-      {state.length === 0 && emptyCart()}
-      {state.length !== 0 && cartItems()}
-      {state.length !== 0 && buttons()}
+      {cartState.length === 0 && emptyCart()}
+      {cartState.length !== 0 && cartItems()}
+      {cartState.length !== 0 && buttons()}
     </div>
   );
 };

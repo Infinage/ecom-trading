@@ -7,10 +7,11 @@ import orderImg from '../assets/order.svg';
 
 const Order = () => {
   const navigate = useNavigate();
-  const state = useSelector((state) => state.handleCart);
-  const order = useSelector((state) => state.handleOrder);
+  const cartState = useSelector((state) => state.cart);
+  const orderState = useSelector((state) => state.order);
+  const userState = useSelector((state) => state.user);
+
   const [subTotal, setSubTotal] = useState();
-  const userState = useSelector((state) => state.handleUser);
 
   useEffect(() => {
     calcSubTotal(order, 0);
@@ -85,15 +86,15 @@ const Order = () => {
   };
 
   const calcSubTotal = (state, tempCoupon) => {
-    if (state !== undefined && state !== null && state !== []) {
+    if (cartState !== undefined && cartState !== null && cartState !== []) {
       let grandTot = 0;
-      state.map((element) => (grandTot += element.price * element.quantity));
+      cartState.map((element) => (grandTot += element.price * element.quantity));
       setSubTotal(grandTot - tempCoupon);
     }
   };
   return (
     <div className="container " style={{ padding: '20px', display: 'flex' }}>
-      {userState === null || state == [] ? (
+      {userState === null || userState == [] ? (
         <NoUser />
       ) : !show ? (
         <Loading />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { addCart } from '../redux/action';
+import { addCart } from '../redux/slices/cart-slice';
 import { useParams } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';

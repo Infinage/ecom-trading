@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
-import { addCart } from '../redux/action';
+import { addCart } from '../redux/slices/cart-slice';
 import { useDispatch } from 'react-redux';
 
 const Products = () => {
