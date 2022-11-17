@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { registerUser } from '../redux/slices/user-slice';
+import { userRegister } from '../redux/slices/user-slice';
 import { useDispatch } from 'react-redux';
 
 const Register = () => {
@@ -14,13 +14,12 @@ const Register = () => {
 
   const handleSubmit = () => {
     dispatch(
-      registerUser({
+      userRegister({
         name: name,
         password: password,
         email: email,
         phone: phone,
-        address: address,
-        loggedIn: false,
+        address: address
       })
     );
     navigate('/login');

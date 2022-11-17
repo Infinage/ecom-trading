@@ -1,10 +1,20 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { userLogout } from '../redux/slices/user-slice';
 
 const Navbar = () => {
   const cartState = useSelector((state) => state.cart);
   const userState = useSelector((state) => state.user);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(userLogout());
+    navigate("/login");
+  }
+
   return (
     <div>
       <nav className="navbar navbar-expand-sm navbar-light bg-light  py-3 bg-dark ">
@@ -46,17 +56,14 @@ const Navbar = () => {
             </li>
           </ul>
           <div className="buttons">
-            <NavLink to="/login" className="btn btn-outline-dark text-light">
-              <i className="fa fa-sign-in me-1"></i>{' '}
-              {userState == null ? 'Login' : userState.name}
-            </NavLink>
-            {/*<NavLink
-              to="/register"
-              className="btn btn-outline-dark ms-2 text-light"
-            >
-              <i className="fa fa-user-plus me-1"></i> Register
-            </NavLink>*/}
-
+            {
+              userState.user == null ? 
+              <NavLink to="/login" className="btn btn-outline-dark text-light">
+              <i className="fa fa-sign-in me-1"></i>Login</NavLink>
+              : 
+              <div className="btn btn-outline-dark text-light" onClick={handleLogout}>
+              <i className="fa fa-sign-in me-1"></i>{' ' + userState.user.name}</div>
+            }
             <NavLink
               to="/cart"
               className="btn btn-outline-dark ms-2 text-light"

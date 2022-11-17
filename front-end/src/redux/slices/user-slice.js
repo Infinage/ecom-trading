@@ -1,31 +1,77 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { register, login, logout } from "../../services/user-auth";
+
+const user = JSON.parse(localStorage.getItem('user'));
+
+const initialState = user
+  ? { ...user }
+  : { user: null, token: null };
+
+export const userRegister = createAsyncThunk(
+    "user/register", 
+    async ({name, email, password, address, phone}, thunkAPI) => {
+
+        const result = await register(name, email, password, address, phone);
+        
+        // Return value is the action payload
+        if (result.user) return result; 
+        else return thunkAPI.rejectWithValue();
+
+    }
+)
+
+export const userLogin = createAsyncThunk(
+    "user/login", 
+    async ({email, password}, thunkAPI) => {
+        const result = await login(email, password);
+
+        console.log("Login Result: ", result);
+
+        if (result.user) return result;
+        else return thunkAPI.rejectWithValue();
+    }
+)
+
+export const userLogout = createAsyncThunk(
+    "user/logout", 
+    async () => {
+        return await logout()
+    }
+);
 
 const userSlice = createSlice({
 
     name: "user",
-    initialState: null,
+    initialState: initialState,
 
-    reducers: {
-        
-        userLogin: (state, action) => { 
-            console.log("User Login reducer being called");
-            return action.payload
+    extraReducers: {
+
+        [userRegister.fulfilled]: (state, action) => {
+            state.user = action.payload.user;
+            state.token = action.payload.token;
         },
 
-        userLogout: (state) => { 
-            console.log("User Logout reducer being called");
-            state = null;
-            return state;
+        [userRegister.rejected]: (state, action) => {
+            state.user = null;
+            state.token = null;
+        },        
+
+        [userLogin.fulfilled]: (state, action) => {
+            state.user = action.payload.user;
+            state.token = action.payload.token;
         },
 
-        registerUser: (state, action) => {
-            console.log("User register reducer being called");
-            state = action.payload;
-            return state;
-        }
+        [userLogin.rejected]: (state, action) => {
+            state.user = null;
+            state.token = null;
+        },
+
+        [userLogout.fulfilled]: (state, action) => {
+            state.user = null;
+            state.token = null;
+        },
     }
 
 });
 
-export const {userLogin, userLogout, registerUser} = userSlice.actions;
 export default userSlice.reducer;

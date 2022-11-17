@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { userLogin } from '../redux/slices/user-slice';
 
 const Login = () => {
-  const [name, setName] = useState();
+  const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
 
   const handleSubmit = () => {
-    if (user == null) {
-      alert('Register First Then login');
-      navigate('/register');
-    } else if (user.name == name && user.password == password) {
-      user.loggedIn = true;
-    } else {
-      navigate('/cart');
-    }
+    dispatch(userLogin({email, password}));
+    navigate("/cart")
   };
 
   return (
@@ -27,12 +23,12 @@ const Login = () => {
             Email address
           </label>
           <input
-            value={name}
+            value={email}
             type="email"
             className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <div id="emailHelp" className="form-text">
             We'll never share your email with anyone else.

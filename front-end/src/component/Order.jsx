@@ -15,7 +15,7 @@ const Order = () => {
 
   useEffect(() => {
     calcSubTotal(order, 0);
-  }, [order]);
+  }, [orderState]);
 
   const [show, setShow] = useState(false);
 

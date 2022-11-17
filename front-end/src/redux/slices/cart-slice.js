@@ -5,7 +5,6 @@ const cartSlice = createSlice({
     initialState: [],
     reducers: {
         addCart: (state, action) => {
-            console.log("Add Cart reducer being called");
             const exist = state.find((x) => x._id === action.payload._id);
             if (exist) {
                 // Increase the Quantity
@@ -17,17 +16,15 @@ const cartSlice = createSlice({
         },
 
         delCart: (state, action) => {
-            console.log("Del Cart reducer being called");
             const exist1 = state.find((x) => x._id === action.payload._id);
             if (exist1.quantity === 1) {
-                return state.filter((x) => x.id !== exist1.id);
+                return state.filter((x) => x._id !== exist1._id);
             } else {
                 return state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity - 1 } : x);
             }
         },
 
         delTotCart: (state) => {
-            console.log("Delete total cart reducer being called");
             state = [];
             return state;
         } 
