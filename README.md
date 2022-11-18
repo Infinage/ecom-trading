@@ -13,6 +13,9 @@
 5. Switch from buyer to seller perspective from the front end
 6. Settings page to update self (user) details, reset user password
 7. Update social media links to yours and vijay's
+8. Payment gateway - between buyer and seller
+9. Chatbot integegration - Website support, maybe interact with website with the help of whatsapp / Telegram / Discord bots
+10. Maps integration - Embed the company's address on footer
 
 Login Using Redux Toolkit: https://www.bezkoder.com/react-redux-login-example-toolkit-hooks/
 
