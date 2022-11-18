@@ -68,15 +68,22 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Before saving the password to DB, hash it
-UserSchema.pre("create", async function () {
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
+UserSchema.pre("save", async function () {
+    
+    // We hash password only when manually provided. By default passwords are not returned 
+    // by the backend unless explictly requested. So whenever there is a password field
+    // the user deliberately wants to reset his password and so we hash it
+    if (this.password){ 
+        const salt = await bcrypt.genSalt();
+        this.password = await bcrypt.hash(this.password, salt);
+    }
+
 });
 
 // Create a JWT token - We have the ID, name & Cart details in JWT
 UserSchema.methods.createJWT = function () {
     return jwt.sign(
-        { userId: this._id, name: this.name, cartCount: this.cart.length},
+        { userId: this._id, name: this.name },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_LIFETIME }
       );

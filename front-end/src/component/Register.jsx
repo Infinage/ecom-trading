@@ -12,7 +12,7 @@ const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = () => {
+  const handleSubmit = () => {    
     dispatch(
       userRegister({
         name: name,
@@ -22,7 +22,7 @@ const Register = () => {
         address: address
       })
     );
-    navigate('/login');
+    navigate('/');
   };
   return (
     <div className="container" style={{ padding: '20px' }}>

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { register, login, logout } from "../../services/user-auth";
+import { delTotCart } from "./cart-slice";
 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -24,9 +25,6 @@ export const userLogin = createAsyncThunk(
     "user/login", 
     async ({email, password}, thunkAPI) => {
         const result = await login(email, password);
-
-        console.log("Login Result: ", result);
-
         if (result.user) return result;
         else return thunkAPI.rejectWithValue();
     }
@@ -34,7 +32,9 @@ export const userLogin = createAsyncThunk(
 
 export const userLogout = createAsyncThunk(
     "user/logout", 
-    async () => {
+    // 'args' are undefined. Passing args is optional
+    async (args, thunkAPI) => {
+        thunkAPI.dispatch(delTotCart());
         return await logout()
     }
 );

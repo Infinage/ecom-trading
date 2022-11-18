@@ -56,7 +56,7 @@ const Shipping = () => {
           </div>
         </div>
         <div className="bs-stepper-content">
-          <form onSubmit={this.onSubmit}>
+          <form>
             <div id="test-l-1" className="content">
               <div className="form-group">
                 <label for="address">Address</label>
@@ -90,7 +90,7 @@ const Shipping = () => {
                   type="text"
                   className="form-control"
                   id="exampleInputPassword1"
-                  placeholder="Password"
+                  placeholder="Name"
                 />
                 <br />
                 <label for="exampleCard">Credit Card number</label>

@@ -11,8 +11,10 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    dispatch(userLogout());
-    navigate("/login");
+    if (confirm("Do you wish to logout?")){
+      dispatch(userLogout());
+      navigate("/login");
+    }
   }
 
   return (

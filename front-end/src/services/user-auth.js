@@ -1,4 +1,4 @@
-export const register = async (name, password, email, phone, address) => {
+export const register = async (name, email, password, address, phone) => {
     
     let registerOptions = {
         method: "POST",

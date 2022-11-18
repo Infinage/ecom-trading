@@ -15,7 +15,7 @@ const register = async (req, res) => {
         if (!user){ 
             user = await User.create({ name, email, password, address, phone });   
             const token = user.createJWT();
-            res.status(StatusCodes.CREATED).json({user: {id: user._id, name: user.name}, token});
+            res.status(StatusCodes.CREATED).json({user: {id: user._id, name: user.name, cartSize: user.cart.length}, token});
         } else { // If user already found, reject the register request
             res.status(StatusCodes.CONFLICT).json({message: "The Mail ID already exists. Please proceed to login."});
         }
@@ -34,7 +34,7 @@ const login = async (req, res) => {
         const user = await User.findOne({email}).select("+password");
         if (user && await user.comparePassword(password)){
             const token = user.createJWT();
-            res.status(StatusCodes.OK).json({user: {id: user._id, name: user.name}, token});
+            res.status(StatusCodes.OK).json({user: {id: user._id, name: user.name, cartSize: user.cart.length}, token});
         } else {
             res.status(StatusCodes.UNAUTHORIZED).json({message: "User ID or the Password entered is incorrect."});
         }
@@ -79,6 +79,7 @@ const modifyCart = async (req, res) => {
 
     const {prodId: id} = req.params;
     let {op, qty} = req.query;
+    qty = Number(qty);
 
     if (!op) op = "ADD";
     if (!qty || qty <= 0) qty = 1;
@@ -98,7 +99,7 @@ const modifyCart = async (req, res) => {
             for (let index in user.cart){
                 let prod = user.cart[index];
                 if (prod.product.toString() === product._id.toString()){
-                    prod.quantity += op === "ADD" ? qty: -qty;
+                    prod.quantity += (op === "ADD" ? qty: -qty);
                     if (prod.quantity <= 0) toRemove = index;
                     found = true;
                     break;
@@ -116,7 +117,7 @@ const modifyCart = async (req, res) => {
                 user.cart = [...user.cart.slice(0, toRemove), ...user.cart.slice(toRemove + 1)];
 
             user.save(); // Save the changes to user to the DB
-            res.status(StatusCodes.OK).json({data: user.cart});
+            res.status(StatusCodes.OK).json({data: user.cart, cartSize: user.cart.length});
 
         }
     } else { // If no user is logged in, simply return an empty list

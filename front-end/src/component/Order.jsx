@@ -14,7 +14,7 @@ const Order = () => {
   const [subTotal, setSubTotal] = useState();
 
   useEffect(() => {
-    calcSubTotal(order, 0);
+    calcSubTotal(orderState, 0);
   }, [orderState]);
 
   const [show, setShow] = useState(false);
@@ -134,9 +134,8 @@ const Order = () => {
                           </tr>
                         </thead>
 
-                        {order.map(
+                        {orderState.map(
                           (product) => (
-                            console.log(product),
                             (
                               <tbody key={product._id}>
                                 <tr>
