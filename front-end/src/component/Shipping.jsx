@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { handleOrder } from '../redux/slices/order-slice';
 import { delTotCart } from '../redux/slices/cart-slice';
+import { getUser } from '../services/user-auth';
 
 const Shipping = () => {
   const navigate = useNavigate();
@@ -16,19 +17,27 @@ const Shipping = () => {
   const [step, setStep] = useState(null);
 
   useEffect(() => {
-    const getId = () => {
-      var stepper = new Stepper(document.querySelector('#stepper1'), {
-        linear: false,
-        animation: true,
-      });
-      setStep(stepper);
-    };
-    getId();
+    
+    // Populate the user name, address, phone from the DB
+    getUser(userState.user.id).then(resp => {
+      if (resp._id){
+        document.getElementById("exampleAddress").value = resp['address'];
+        document.getElementById("examplePhone").value = resp['phone'];
+        document.getElementById("exampleName").value = resp['name'];
+      }
+    });
+
+    var stepper = new Stepper(document.querySelector('#stepper1'), {
+      linear: false,
+      animation: true,
+    });
+    setStep(stepper);
+    
   }, []);
 
   const handleClick = (e) => {
     e.preventDefault();
-    setStep(step.next());
+    document.getElementsByClassName("step-trigger")[1].click();
   };
 
   const handleSubmit = () => {
@@ -59,7 +68,7 @@ const Shipping = () => {
           <form>
             <div id="test-l-1" className="content">
               <div className="form-group">
-                <label for="address">Address</label>
+                <label htmlFor="address">Address</label>
                 <input
                   type="text"
                   className="form-control"
@@ -68,7 +77,7 @@ const Shipping = () => {
                   value={userState.address}
                 />
                 <br />
-                <label for="phone">Phone</label>
+                <label htmlFor="phone">Phone</label>
                 <input
                   type="tel"
                   className="form-control"
@@ -85,35 +94,35 @@ const Shipping = () => {
 
             <div id="test-l-2" className="content">
               <div className="form-group">
-                <label for="exampleName">Name on card</label>
+                <label htmlFor="exampleName">Name on card</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="exampleInputPassword1"
+                  id="exampleName"
                   placeholder="Name"
                 />
                 <br />
-                <label for="exampleCard">Credit Card number</label>
+                <label htmlFor="exampleCard">Credit Card number</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="exampleInputPassword1"
+                  id="examplePassword"
                   placeholder="Credit Card Number"
                 />
                 <br />
-                <label for="exampleExpiration">Expiration</label>
+                <label htmlFor="exampleExpiration">Expiration</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="exampleInputPassword1"
+                  id="exampleExpiry"
                   placeholder="MM/YY"
                 />
                 <br />
-                <label for="exampleName">CVV</label>
+                <label htmlFor="exampleName">CVV</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="exampleInputPassword1"
+                  id="exampleCVV"
                   placeholder="CVV number"
                 />
               </div>

@@ -10,7 +10,7 @@ export const register = async (name, email, password, address, phone) => {
     let statusOk = resp.ok;
     resp = await resp.json();
 
-    if (statusOk)localStorage.setItem("user", JSON.stringify(resp));
+    if (statusOk) localStorage.setItem("user", JSON.stringify(resp));
 
     return resp;
 

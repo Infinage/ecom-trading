@@ -1,5 +1,6 @@
 ### TODO
 
+0. Failed login / Register to throw error messages
 2. Fix shipping page / Order Page
     - Fetch address from backend
     - Underneath address tab, have option to choose mode of payment (cash on delivery)

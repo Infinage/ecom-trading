@@ -37,6 +37,7 @@ const Order = () => {
     // this value changes (useEffect re-run)
     []
   );
+  
   const Loading = () => {
     return (
       <>
