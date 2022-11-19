@@ -16,7 +16,7 @@ const Navbar = () => {
       navigate("/login");
     }
   }
-
+  
   return (
     <div>
       <nav className="navbar navbar-expand-sm navbar-light bg-light  py-3 bg-dark ">

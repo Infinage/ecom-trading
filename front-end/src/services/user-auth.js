@@ -36,7 +36,21 @@ export const login = async (email, password) => {
 
 export const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("cart");
     return null;
+}
+
+export const getUser = async (userId) => {
+
+    let fetchOptions = {
+        method: "GET",
+        headers: authHeader(),
+    }
+    
+    let resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${userId}`, fetchOptions);
+    resp = await resp.json();
+    return resp;
+
 }
 
 export const authHeader = () => {

@@ -1,35 +1,103 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+
+import {decrementCart, incrementCart} from "./user-slice";
+import {authHeader} from "../../services/user-auth";
+
+const cart = JSON.parse(localStorage.getItem('cart'));
+
+export const addCart = createAsyncThunk(
+
+    // Accessing state of a different slice - https://stackoverflow.com/a/72887349 (option 3)
+
+    "cart/addCart",
+    async (product, thunkAPI) => {
+        
+        const exists = thunkAPI.getState().cart.find((x) => x._id === product._id);
+        const user = thunkAPI.getState().user.user;
+
+        if (user) {
+            if (!exists)
+                thunkAPI.dispatch(incrementCart());
+
+            const resp = await fetch(
+                `${import.meta.env.VITE_BACKEND_URL}/user/modifyCart/${product._id}?` + new URLSearchParams({op: 'ADD', qty: 1}),
+                {method: "PATCH", headers: authHeader()}
+            );
+
+            if (resp.ok){
+                thunkAPI.dispatch(setCartItems(await resp.json().data));
+            }
+        }
+
+        return product;
+    }
+)
+
+export const delCart = createAsyncThunk(
+    "cart/delCart",
+    async (product, thunkAPI) => {
+
+        const exists = thunkAPI.getState().cart.find((x) => x._id === product._id);
+        const user = thunkAPI.getState().user.user;
+
+        if (user) {
+            if (!exists)
+                thunkAPI.dispatch(decrementCart());
+
+            const resp = await fetch(
+                `${import.meta.env.VITE_BACKEND_URL}/user/modifyCart/${product._id}?` + new URLSearchParams({op: 'SUB', qty: 1}),
+                {method: "PATCH", headers: authHeader()}
+            );
+
+            if (resp.ok){
+                thunkAPI.dispatch(setCartItems(await resp.json().data));
+            }
+
+        }
+
+        return product;
+
+    }
+)
 
 const cartSlice = createSlice({
     name: "cart",
-    initialState: [],
+    initialState: cart ? cart: [],
+    
     reducers: {
-        addCart: (state, action) => {
+        delTotCart: (state) => {
+            localStorage.setItem("cart", JSON.stringify([])),
+            state = [];
+            return state;
+        },
+
+        setCartItems: (state, action) => {
+            localStorage.setItem("cart", JSON.stringify(action.payload));
+            state = action.payload;
+            return state;
+        }
+    },
+
+    extraReducers: (builder) => {
+        builder.addCase(addCart.fulfilled, (state, action) => {
             const exist = state.find((x) => x._id === action.payload._id);
-            if (exist) {
-                // Increase the Quantity
+            if (exist) { // Increase the Quantity
                 return state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity + 1 } : x);
             } else {
                 // Add new item
                 return [...state, {...action.payload, quantity: 1}];
             }
-        },
-
-        delCart: (state, action) => {
+        }).addCase(delCart.fulfilled, (state, action) => {
             const exist1 = state.find((x) => x._id === action.payload._id);
-            if (exist1.quantity === 1) {
+            if (exist1.quantity === 1) { // Decrement the Qty
                 return state.filter((x) => x._id !== exist1._id);
             } else {
                 return state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity - 1 } : x);
             }
-        },
-
-        delTotCart: (state) => {
-            state = [];
-            return state;
-        } 
+        }
+        )
     }
 });
 
-export const {addCart, delCart, delTotCart} = cartSlice.actions;
+export const {delTotCart, setCartItems} = cartSlice.actions;
 export default cartSlice.reducer;

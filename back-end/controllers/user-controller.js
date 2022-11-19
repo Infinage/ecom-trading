@@ -61,10 +61,63 @@ const getUser = async (req, res) => {
             delete user['phone']
             delete user['endorsements']
             delete user['cart']
+        } else {
+            // We populate the cart field with a few more "Product" details
+            for (let index in user['cart']){
+                let prod = user['cart'][index];
+                
+                let newProd = (await Product.findById(prod.product)).toJSON();
+                delete newProd.count;
+
+                user['cart'][index] = newProd;
+                user['cart'][index].quantity = prod.quantity;
+            }
         }
 
         res.status(StatusCodes.OK).json(user);
     }
+}
+
+const pushCart = async (req, res) => {
+    /**
+     When user logs in to ecommerce site where he had already added a couple items, these items must be
+     pushed to the user's cart and be persisted. We implement the same functionality with this API
+
+     Input going to be an array of JSON objects. The OP is only "ADD"
+    */
+
+    if (req.user){
+
+        let user = await User.findById(req.user.userId);
+        const products = req.body;
+
+        for (let prod of products){
+
+            if (prod.quantity <= 0){
+                return res.status(StatusCodes.BAD_REQUEST).json({message: "Quantity of products to be must be > 0"});
+            }
+            else if (await Product.exists({_id: prod._id})){
+
+                const index = user.cart.findIndex(currProd => currProd.product.toString() === prod._id.toString());
+                if (index === -1) { 
+                    user.cart.push({product: prod._id, quantity: prod.quantity});
+                } else {
+                    user.cart[index].quantity += prod.quantity;
+                }
+
+            } else {
+                return res.status(StatusCodes.NOT_FOUND).json({message: `Product ID#: ${prod._id} doesn't exist.`});
+            }
+        }
+
+        user = await user.save();
+        return res.status(StatusCodes.OK).json({data: user, cartSize: user.cart.length});
+
+    } else { // If no user is logged in, simply return an empty list
+        res.status(StatusCodes.UNAUTHORIZED).json({message: "There is no user currently signed in."});
+    }
+
+
 }
 
 const modifyCart = async (req, res) => {
@@ -116,7 +169,7 @@ const modifyCart = async (req, res) => {
             if (toRemove)
                 user.cart = [...user.cart.slice(0, toRemove), ...user.cart.slice(toRemove + 1)];
 
-            user.save(); // Save the changes to user to the DB
+            await user.save(); // Save the changes to user to the DB
             res.status(StatusCodes.OK).json({data: user.cart, cartSize: user.cart.length});
 
         }
@@ -125,4 +178,4 @@ const modifyCart = async (req, res) => {
     }
 }
 
-module.exports = {register, login, getUser, modifyCart};
+module.exports = {register, login, getUser, pushCart, modifyCart};

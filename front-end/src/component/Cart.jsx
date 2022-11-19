@@ -17,15 +17,6 @@ const Cart = () => {
     dispatch(delCart(item));
   };
 
-  /*const loCheck = () => {
-    if(userState!= null){
-
-    }
-    var name = 'vij';
-    var password = '123';
-    dispatch(userLogin({ name: name, password: password, loggedIn: true }));
-  };*/
-
   const emptyCart = () => {
     return (
       <div>
@@ -75,9 +66,9 @@ const Cart = () => {
                     <th scope="col">Add/Del</th>
                   </tr>
                 </thead>
+                <tbody>
                 {cartState.map((product) => (
-                  <tbody>
-                    <tr>
+                    <tr key={product._id}>
                       <td style={{ width: '100px' }}>
                         <img
                           src={product.image}
@@ -104,8 +95,8 @@ const Cart = () => {
                         </button>
                       </td>
                     </tr>
-                  </tbody>
                 ))}
+                </tbody>
               </table>
             </div>
           </div>

@@ -1,7 +1,5 @@
 ### TODO
 
-0. Navbar's cart count should be fetched from backend interaction if user signed in, otherwise use react state. Cart should persist across user sessions
-1. Make backend calls from front end to add / subtract products from cart
 2. Fix shipping page / Order Page
     - Fetch address from backend
     - Underneath address tab, have option to choose mode of payment (cash on delivery)
@@ -16,6 +14,7 @@
 8. Payment gateway - between buyer and seller
 9. Chatbot integegration - Website support, maybe interact with website with the help of whatsapp / Telegram / Discord bots
 10. Maps integration - Embed the company's address on footer
+11. PWA / React Native
 
 Login Using Redux Toolkit: https://www.bezkoder.com/react-redux-login-example-toolkit-hooks/
 
