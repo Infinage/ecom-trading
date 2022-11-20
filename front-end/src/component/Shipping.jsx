@@ -40,7 +40,7 @@ const Shipping = () => {
   };
 
   const handleSubmit = () => {
-    dispatch(handleOrder(cartState));
+    dispatch(handleOrder());
     navigate('/order');
   };
 

@@ -1,27 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Skeleton from 'react-loading-skeleton';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import login from '../assets/login.svg';
 import orderImg from '../assets/order.svg';
 
 const Order = () => {
   const navigate = useNavigate();
-  const cartState = useSelector((state) => state.cart);
   const userState = useSelector((state) => state.user);
   const orderState = useSelector((state) => state.order);
-
-  const [subTotal, setSubTotal] = useState();
-
-  useEffect(() => {
-    calcSubTotal(orderState, 0);
-  }, [orderState]);
 
   const [show, setShow] = useState(false);
 
   useEffect(
     () => {
-      let timer1 = setTimeout(() => setShow(true), 3 * 1000);
+      let timer1 = setTimeout(() => setShow(true), 500);
 
       // this will clear Timeout
       // when component unmount like in willComponentUnmount
@@ -86,13 +79,6 @@ const Order = () => {
     );
   };
 
-  const calcSubTotal = (state, tempCoupon) => {
-    if (orderState !== undefined && orderState !== null && orderState !== []) {
-      let grandTot = 0;
-      orderState.map((element) => (grandTot += element.price * element.quantity));
-      setSubTotal(grandTot - tempCoupon);
-    }
-  };
   return (
     <div className="container " style={{ padding: '20px', display: 'flex' }}>
       {userState === null || userState == [] ? (
@@ -118,12 +104,15 @@ const Order = () => {
             <div className="align-items-end d-flex flex-column justify-content-center">
               <div className="container">
                 <div className="card">
-                  <div className="card-header bg-success text-light">
-                    Hurray Order Placed
+                  <div className="card-header bg-success text-light d-flex align-items-center">
+                  <NavLink to="/" className="text-decoration-none link-light">
+                    <i class="fa fa-2x fa-home me-2" aria-hidden="true"></i>
+                    Go Home
+                  </NavLink>
                   </div>
                   <div className="card-body">
                     <h3 className="card-title">Products</h3>
-                    <p className="card-text">Here is your list of products</p>
+                    <p className="card-text">Hurray! Your order has been placed. Here is your list of products:</p>
                     <div className="table-responsive">
                       <table className="table">
                         <thead>
@@ -135,7 +124,7 @@ const Order = () => {
                         </thead>
 
                         <tbody>
-                          {orderState.map(
+                          {orderState.order.map(
                             (product) => (
                               <tr key={product._id}>
                                 <td>{product.title}</td>
@@ -149,8 +138,8 @@ const Order = () => {
                         <tfoot>
                           <tr>
                             <td>Total</td>
-                            <td>{orderState.reduce((acc, curr) => acc + curr.quantity, 0)}</td>
-                            <td>$ {Math.round(subTotal * 100) / 100}</td>
+                            <td>{orderState.quantity}</td>
+                            <td>$ {Math.round(orderState.cost * 100) / 100}</td>
                           </tr>
                         </tfoot>
                       </table>

@@ -3,6 +3,22 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { decrementCart, incrementCart } from "./user-slice";
 import { authHeader } from "../../services/user-auth";
 
+/* Cart = [
+  {
+    "_id": "312adsa",
+    "title": "ABC",
+    "price": 109.95,
+    "description": "Desc",
+    "category": "Apparel",
+    "image": "img.jpg",
+    "count": 1,
+    "user": "adasd1das",
+    "createdAt": "2022-11-13T10:00:12.077Z",
+    "updatedAt": "2022-11-13T10:00:12.077Z",
+    "__v": 0,
+    "quantity": 1
+  }]
+  */
 const cart = JSON.parse(localStorage.getItem('cart'));
 
 export const addCart = createAsyncThunk(

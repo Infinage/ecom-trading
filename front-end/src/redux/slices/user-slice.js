@@ -5,6 +5,16 @@ import { delTotCart, setCartItems } from "./cart-slice";
 
 const user = JSON.parse(localStorage.getItem('user'));
 
+/*
+{
+  "user": {
+    "id": "Asdd1ada",
+    "name": "ABC",
+    "cartSize": 2
+  },
+  "token": "asdasd1asd12ads"
+}
+*/
 const initialState = user
   ? { ...user }
   : { user: null, token: null };
