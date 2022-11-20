@@ -114,7 +114,7 @@ const Cart = () => {
       <>
         <div className="container">
           <div className="row">
-            {userState != null ? (
+            {userState.user != null ? (
               <NavLink
                 to="/shipping"
                 className={`btn btn-outline-dark mb-5 w-25 mx-auto ${cartState.some(prod => prod.quantity > prod.count)? 'disabled': ''}`}

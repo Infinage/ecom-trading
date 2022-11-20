@@ -5,7 +5,11 @@
   "scripts": {
     "backend:dev": "npm run dev -w back-end",
     "frontend:dev": "npm run dev -w front-end",
-    "dev": "npm run backend:dev & npm run frontend:dev"
+    "dev": "npm run backend:dev & npm run frontend:dev",
+
+    "clean": "rm -rf ./node_modules/*; npm run clean -w front-end; npm run clean -w back-end",
+    "build": "npm run clean; npm install; npm run build -w front-end",
+    "start": "cd ./back-end; node app"
   },
   "keywords": [],
   "author": "Naresh Jagadeesan & Vijayakumar Jothiramalingam",

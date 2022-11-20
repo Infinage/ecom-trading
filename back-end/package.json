@@ -4,6 +4,7 @@
   "description": "Backend for Ecom-shopping",
   "main": "app.js",
   "scripts": {
+    "clean": "rm -rf ./node_modules/*;",
     "dev": "nodemon app"
   },
   "author": "Naresh Jagadeesan",

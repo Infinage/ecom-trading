@@ -14,7 +14,7 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
-app.use([cors(), express.json()]);
+app.use([cors(), express.json(), express.static("./public")]);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/order", orderRouter);
