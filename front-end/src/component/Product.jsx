@@ -20,7 +20,7 @@ const Product = () => {
   useEffect(() => {
     const getProduct = async () => {
       setLoading(true);
-      const response = await fetch(`/products/${id}`);
+      const response = await fetch(`/api/v1/products/${id}`);
       setProduct(await response.json());
       setLoading(false);
     };
@@ -32,7 +32,7 @@ const Product = () => {
     const fetchData = async () => {
       setSugLoad(true);
       const sug_response = await fetch(
-        `/products/category/${product.category}`
+        `/api/v1/products/category/${product.category}`
       );
       setSugProd(await sug_response.json());
 
