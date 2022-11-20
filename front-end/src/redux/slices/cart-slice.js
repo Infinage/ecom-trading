@@ -1,7 +1,7 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import {decrementCart, incrementCart} from "./user-slice";
-import {authHeader} from "../../services/user-auth";
+import { decrementCart, incrementCart } from "./user-slice";
+import { authHeader } from "../../services/user-auth";
 
 const cart = JSON.parse(localStorage.getItem('cart'));
 
@@ -11,7 +11,7 @@ export const addCart = createAsyncThunk(
 
     "cart/addCart",
     async (product, thunkAPI) => {
-        
+
         const exists = thunkAPI.getState().cart.find((x) => x._id === product._id);
         const user = thunkAPI.getState().user.user;
 
@@ -20,11 +20,11 @@ export const addCart = createAsyncThunk(
                 thunkAPI.dispatch(incrementCart());
 
             const resp = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/user/modifyCart/${product._id}?` + new URLSearchParams({op: 'ADD', qty: 1}),
-                {method: "PATCH", headers: authHeader()}
+                `${import.meta.env.VITE_BACKEND_URL}/user/modifyCart/${product._id}?` + new URLSearchParams({ op: 'ADD', qty: 1 }),
+                { method: "PATCH", headers: authHeader() }
             );
 
-            if (resp.ok){
+            if (resp.ok) {
                 thunkAPI.dispatch(setCartItems(await resp.json().data));
             }
         }
@@ -45,11 +45,11 @@ export const delCart = createAsyncThunk(
                 thunkAPI.dispatch(decrementCart());
 
             const resp = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/user/modifyCart/${product._id}?` + new URLSearchParams({op: 'SUB', qty: 1}),
-                {method: "PATCH", headers: authHeader()}
+                `${import.meta.env.VITE_BACKEND_URL}/user/modifyCart/${product._id}?` + new URLSearchParams({ op: 'SUB', qty: 1 }),
+                { method: "PATCH", headers: authHeader() }
             );
 
-            if (resp.ok){
+            if (resp.ok) {
                 thunkAPI.dispatch(setCartItems(await resp.json().data));
             }
 
@@ -62,8 +62,8 @@ export const delCart = createAsyncThunk(
 
 const cartSlice = createSlice({
     name: "cart",
-    initialState: cart ? cart: [],
-    
+    initialState: cart ? cart : [],
+
     reducers: {
         delTotCart: (state) => {
             localStorage.setItem("cart", JSON.stringify([])),
@@ -85,7 +85,7 @@ const cartSlice = createSlice({
                 return state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity + 1 } : x);
             } else {
                 // Add new item
-                return [...state, {...action.payload, quantity: 1}];
+                return [...state, { ...action.payload, quantity: 1 }];
             }
         }).addCase(delCart.fulfilled, (state, action) => {
             const exist1 = state.find((x) => x._id === action.payload._id);
@@ -94,10 +94,9 @@ const cartSlice = createSlice({
             } else {
                 return state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity - 1 } : x);
             }
-        }
-        )
+        })
     }
 });
 
-export const {delTotCart, setCartItems} = cartSlice.actions;
+export const { delTotCart, setCartItems } = cartSlice.actions;
 export default cartSlice.reducer;

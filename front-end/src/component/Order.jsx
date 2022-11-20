@@ -8,8 +8,8 @@ import orderImg from '../assets/order.svg';
 const Order = () => {
   const navigate = useNavigate();
   const cartState = useSelector((state) => state.cart);
-  const orderState = useSelector((state) => state.order);
   const userState = useSelector((state) => state.user);
+  const orderState = useSelector((state) => state.order);
 
   const [subTotal, setSubTotal] = useState();
 
@@ -87,9 +87,9 @@ const Order = () => {
   };
 
   const calcSubTotal = (state, tempCoupon) => {
-    if (cartState !== undefined && cartState !== null && cartState !== []) {
+    if (orderState !== undefined && orderState !== null && orderState !== []) {
       let grandTot = 0;
-      cartState.map((element) => (grandTot += element.price * element.quantity));
+      orderState.map((element) => (grandTot += element.price * element.quantity));
       setSubTotal(grandTot - tempCoupon);
     }
   };
@@ -128,32 +128,28 @@ const Order = () => {
                       <table className="table">
                         <thead>
                           <tr>
-                            <th scope="col">Item Id</th>
                             <th scope="col">Product Name</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Price</th>
                           </tr>
                         </thead>
 
-                        {orderState.map(
-                          (product) => (
-                            (
-                              <tbody key={product._id}>
-                                <tr>
-                                  <th scope="row">{product._id}</th>
-                                  <td>{product.title}</td>
-                                  <td>{product.quantity}</td>
-                                  <td>$ {product.price}</td>
-                                </tr>
-                              </tbody>
+                        <tbody>
+                          {orderState.map(
+                            (product) => (
+                              <tr key={product._id}>
+                                <td>{product.title}</td>
+                                <td>{product.quantity}</td>
+                                <td>$ {product.price}</td>
+                              </tr>
                             )
-                          )
-                        )}
+                          )}
+                        </tbody>
+
                         <tfoot>
                           <tr>
-                            <td></td>
-                            <td>Total Price</td>
-                            <td></td>
+                            <td>Total</td>
+                            <td>{orderState.reduce((acc, curr) => acc + curr.quantity, 0)}</td>
                             <td>$ {Math.round(subTotal * 100) / 100}</td>
                           </tr>
                         </tfoot>

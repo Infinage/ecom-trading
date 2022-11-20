@@ -5,7 +5,6 @@ import Stepper from 'bs-stepper';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { handleOrder } from '../redux/slices/order-slice';
-import { delTotCart } from '../redux/slices/cart-slice';
 import { getUser } from '../services/user-auth';
 
 const Shipping = () => {
@@ -42,7 +41,6 @@ const Shipping = () => {
 
   const handleSubmit = () => {
     dispatch(handleOrder(cartState));
-    dispatch(delTotCart());
     navigate('/order');
   };
 

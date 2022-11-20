@@ -67,7 +67,7 @@ const getUser = async (req, res) => {
                 let prod = user['cart'][index];
                 
                 let newProd = (await Product.findById(prod.product)).toJSON();
-                delete newProd.count;
+                // delete newProd.count;
 
                 user['cart'][index] = newProd;
                 user['cart'][index].quantity = prod.quantity;

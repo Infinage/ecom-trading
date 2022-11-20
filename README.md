@@ -2,10 +2,8 @@
 
 0. Failed login / Register to throw error messages
 2. Fix shipping page / Order Page
-    - Fetch address from backend
-    - Underneath address tab, have option to choose mode of payment (cash on delivery)
-    - Instead of payment, show confirm order details
     - If cart is empty, shipping shouldn't work
+    - If cart is empty, order page should redirect to cart
     - Validation for credit card number and cvv
 3. After products are confirmed by buyer, seller should receive a mail and contents from his inventory be reduced
 4. Create error middlewares with proper error code / messages - backend, Create error pages - frontend

@@ -76,13 +76,18 @@ const Cart = () => {
                           alt={product._id}
                         />
                       </td>
-                      <td>{product.title}</td>
+                      <td>
+                        <NavLink to={`/products/${product._id}`} className="text-decoration-none link-dark">
+                          {product.title} <br/>
+                          {product.quantity >= product.count && <span className='badge bg-primary'>Only {product.count} in Stock</span>}
+                        </NavLink>
+                      </td>
                       <td>{product.quantity}</td>
                       <td>{product.price}</td>
                       <td>{product.quantity * product.price}</td>
                       <td>
                         <button
-                          className="btn btn-outline-primary mx-2 px-2"
+                          className={`btn btn-outline-primary mx-2 px-2 ${product.quantity >= product.count? 'disabled': ''}`}
                           onClick={() => handleAdd(product)}
                         >
                           <i className="fa fa-plus"></i>
@@ -112,7 +117,7 @@ const Cart = () => {
             {userState != null ? (
               <NavLink
                 to="/shipping"
-                className="btn btn-outline-dark mb-5 w-25 mx-auto"
+                className={`btn btn-outline-dark mb-5 w-25 mx-auto ${cartState.some(prod => prod.quantity > prod.count)? 'disabled': ''}`}
               >
                 Checkout
               </NavLink>
