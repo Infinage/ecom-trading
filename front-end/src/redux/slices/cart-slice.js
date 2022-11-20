@@ -36,7 +36,7 @@ export const addCart = createAsyncThunk(
                 thunkAPI.dispatch(incrementCart());
 
             const resp = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/user/modifyCart/${product._id}?` + new URLSearchParams({ op: 'ADD', qty: 1 }),
+                `/user/modifyCart/${product._id}?` + new URLSearchParams({ op: 'ADD', qty: 1 }),
                 { method: "PATCH", headers: authHeader() }
             );
 
@@ -61,7 +61,7 @@ export const delCart = createAsyncThunk(
                 thunkAPI.dispatch(decrementCart());
 
             const resp = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/user/modifyCart/${product._id}?` + new URLSearchParams({ op: 'SUB', qty: 1 }),
+                `/user/modifyCart/${product._id}?` + new URLSearchParams({ op: 'SUB', qty: 1 }),
                 { method: "PATCH", headers: authHeader() }
             );
 

@@ -1,3 +1,5 @@
+Code Live on: https://ecom-trading.cyclic.app/
+
 ### TODO
 
 0. Failed login / Register to throw error messages
