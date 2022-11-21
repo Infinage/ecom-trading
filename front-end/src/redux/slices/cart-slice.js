@@ -98,18 +98,25 @@ const cartSlice = createSlice({
         builder.addCase(addCart.fulfilled, (state, action) => {
             const exist = state.find((x) => x._id === action.payload._id);
             if (exist) { // Increase the Quantity
-                return state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity + 1 } : x);
+                state = state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity + 1 } : x);
             } else {
                 // Add new item
-                return [...state, { ...action.payload, quantity: 1 }];
+                state = [...state, { ...action.payload, quantity: 1 }];
             }
+
+            localStorage.setItem("cart", JSON.stringify(state));
+            return state;
+
         }).addCase(delCart.fulfilled, (state, action) => {
             const exist1 = state.find((x) => x._id === action.payload._id);
             if (exist1.quantity === 1) { // Decrement the Qty
-                return state.filter((x) => x._id !== exist1._id);
+                state = state.filter((x) => x._id !== exist1._id);
             } else {
-                return state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity - 1 } : x);
+                state = state.map((x) => x._id === action.payload._id ? { ...x, quantity: x.quantity - 1 } : x);
             }
+
+            localStorage.setItem("cart", JSON.stringify(state));
+            return state;
         })
     }
 });
