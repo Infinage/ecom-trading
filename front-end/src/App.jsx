@@ -16,6 +16,8 @@ import Register from './component/Register';
 import Shipping from './component/Shipping';
 import Order from './component/Order';
 import Contact from './component/Contact';
+import Offering from './component/Offering';
+import ProductForm from './component/ProductForm';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
           <Route exact path="/products" element={ <Products /> } />
           <Route exact path="/products/:id" element={ <Product /> } />
           <Route exact path="/cart" element={ <Cart /> } />
+          <Route exact path="/merchant/:id" element={ <Offering /> } />
+          <Route exact path="/new-product" element={ <ProductForm /> } />
           <Route exact path="/checkout" element={ <Checkout /> } />
           <Route exact path="/login" element={ <Login /> } />
           <Route exact path="/register" element={ <Register /> } />

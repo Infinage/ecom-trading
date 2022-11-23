@@ -20,7 +20,7 @@ const Product = () => {
   useEffect(() => {
     const getProduct = async () => {
       setLoading(true);
-      const response = await fetch(`/api/v1/products/${id}`);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`);
       setProduct(await response.json());
       setLoading(false);
     };
@@ -32,7 +32,7 @@ const Product = () => {
     const fetchData = async () => {
       setSugLoad(true);
       const sug_response = await fetch(
-        `/api/v1/products/category/${product.category}`
+        `${import.meta.env.VITE_BACKEND_URL}/products/category/${product.category}`
       );
       setSugProd(await sug_response.json());
 
@@ -90,7 +90,12 @@ const Product = () => {
           />
         </div>
         <div className="col-md-6">
-          <h4 className="text-uppercase text-black-50">{product.category} | Seller: {product.user && product.user.slice(-5)}</h4>
+          <h4 className="text-uppercase text-black-50">
+            {product.category} | Merchant: &nbsp;
+                <NavLink className="text-decoration-none text-reset" to={`/merchant/${product.user}`}>
+                  {product.user && product.user.slice(-5)}
+                </NavLink>
+          </h4>
           <h1 className="display-5">{product.title}</h1>
           <p className="lead">
             {product.count > 0? `${product.count} left in Stock`: "Sold Out"}
