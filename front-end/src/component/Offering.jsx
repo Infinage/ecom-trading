@@ -1,10 +1,12 @@
 import { useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import offering from '../assets/offering.svg';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Offering = () => {
     
     const { id } = useParams();
+    const offeringState = useSelector((state) => state.offering);
 
     const emptyOffering = () => {
         return (
@@ -44,7 +46,7 @@ const Offering = () => {
         return (
             <div className="container">
           <div className="row" style={{ padding: '10px' }}>
-            <h3>Cart Items</h3>
+            <h3>Product Listings</h3>
             <div className="col-12">
               <table className="table table-image">
                 <thead>
@@ -53,41 +55,34 @@ const Offering = () => {
                     <th scope="col">Product Name</th>
                     <th scope="col">Description</th>
                     <th scope="col">Category</th>
-                    <th scope="col">Count</th>
+                    <th scope="col">Stock Available</th>
                     <th scope="col">Update</th>
                   </tr>
                 </thead>
                 <tbody>
-                {cartState.map((product) => (
-                    <tr key={product._id}>
+                {offeringState.map((offering) => (
+                    <tr key={offering._id}>
                       <td style={{ width: '100px' }}>
                         <img
-                          src={product.image}
+                          src={offering.image}
                           className="img-fluid img-thumbnail"
-                          alt={product._id}
+                          alt={offering.name}
                         />
                       </td>
                       <td>
                         <NavLink to={`/products/${product._id}`} className="text-decoration-none link-dark">
-                          {product.title} <br/>
-                          {product.quantity >= product.count && <span className='badge bg-primary'>Only {product.count} in Stock</span>}
+                          {offering.name} <br/>
                         </NavLink>
                       </td>
-                      <td>{product.quantity}</td>
-                      <td>{product.price}</td>
-                      <td>{product.quantity * product.price}</td>
+                      <td>{offering.description}</td>
+                      <td>{offering.category}</td>
+                      <td>{offering.count}</td>
                       <td>
                         <button
-                          className={`btn btn-outline-primary mx-2 px-2 ${product.quantity >= product.count? 'disabled': ''}`}
-                          onClick={() => handleAdd(product)}
+                          className={`btn btn-outline-primary mx-2 px-2`}
+                          onClick={() => {}} 
                         >
                           <i className="fa fa-plus"></i>
-                        </button>
-                        <button
-                          className="btn btn-outline-danger mx-2 px-2"
-                          onClick={() => handleDel(product)}
-                        >
-                          <i className="fa fa-minus"></i>
                         </button>
                       </td>
                     </tr>

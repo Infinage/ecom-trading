@@ -2,7 +2,7 @@ Code Live on: https://ecom-trading.cyclic.app/
 
 ### TODO
 
-0. Failed login / Register to throw error messages
+0. Failed login / Register to throw error messages - reference "Toast" at contact.jsx
 2. Fix shipping page / Order Page
     - If cart is empty, shipping shouldn't work
     - If cart is empty, order page should redirect to cart
