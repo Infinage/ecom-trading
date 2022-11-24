@@ -1,7 +1,20 @@
 import productImage from '../assets/new-product.svg';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { useRef } from 'react';
+import { Toast } from 'bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { addOffering } from '../redux/slices/offering-slice';
+import { useEffect } from 'react';
 
 const ProductForm = () => {
+
+    const offerings = useSelector(state => state.offering);
+    const dispatch = useDispatch();
+    
+    const toastRef = useRef();
+
+    // To avoid calling useEffect on the first render
+    const isMounted = useRef(false);
 
     const refreshImage = async (url) => {
 
@@ -30,7 +43,21 @@ const ProductForm = () => {
 
     }
 
-    return(
+    const handleSubmit = async (values) => {
+        dispatch(addOffering(values));
+    }
+
+    useEffect(() => {
+        if (isMounted.current){
+            const myToast = toastRef.current;
+            const bsToast = new Toast(myToast, { autohide: true });
+            bsToast.show();
+        } else {
+            isMounted.current = true;
+        }
+    }, [offerings]);
+
+    return (
         <div>
             <div className="row  bg-dark" style={{ padding: '20px' }}>
             <div className="col-md-8">
@@ -77,8 +104,10 @@ const ProductForm = () => {
                                 return errors;
                             }}
 
-                            onSubmit={(values) => { 
-                                console.log(values);
+                            onSubmit={(values, { resetForm }) => {
+                                handleSubmit(values); 
+                                resetForm();
+                                refreshImage();
                             }}
                         >
 
@@ -86,7 +115,7 @@ const ProductForm = () => {
                                 <Form>
 
                                     <label htmlFor="name">Product Name:</label>
-                                    <Field type="text" name="name" className="form-control" placeholder="Enter Product Name"/>
+                                    <Field type="text" name="name" autoComplete="off" className="form-control" placeholder="Enter Product Name"/>
                                     <ErrorMessage name="name" component="div" className='text-danger'/>
 
                                     <label htmlFor="category">Category:</label>
@@ -109,7 +138,7 @@ const ProductForm = () => {
                                     <ErrorMessage name="price" component="div" className='text-danger' />
 
                                     <label htmlFor="image">Image URL: </label>
-                                    <Field type="text" validate={refreshImage} name="image" className="form-control" placeholder="Enter Image URL"/>
+                                    <Field type="text" validate={refreshImage} autoComplete="off" name="image" className="form-control" placeholder="Enter Image URL"/>
                                     <ErrorMessage name="image" component="div" className='text-danger' />
 
                                     <label htmlFor="description">Product Description: </label>
@@ -124,30 +153,30 @@ const ProductForm = () => {
                     </div>
 
                     <div className='col-md-6 d-flex'>
-                        <img id="new-product-image" src={import.meta.env.VITE_DEFAULT_IMAGE_URL}/>
+                        <img id="new-product-image" className='rounded mx-auto' src={import.meta.env.VITE_DEFAULT_IMAGE_URL}/>
                     </div>
         
-                    <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: '11' }}>
+                    <div className="position-fixed bottom-0 end-0 d-flex justify-content-end p-3" style={{ zIndex: '11' }}>
                         <div
                         id="liveToast"
                         className="toast hide"
                         role="alert"
                         aria-live="assertive"
                         aria-atomic="true"
-                        ref={() => {}}
+                        ref={toastRef}
                         >
                         <div className="toast-header">
                             <i className="bi bi-award-fill"></i>
-                            <strong className="me-auto">Thanks</strong>
+                            <strong className="me-auto">Note</strong>
             
                             <button
-                            type="button"
-                            className="btn-close"
-                            data-bs-dismiss="toast"
-                            aria-label="Close"
+                                type="button"
+                                className="btn-close"
+                                data-bs-dismiss="toast"
+                                aria-label="Close"
                             ></button>
                         </div>
-                        <div className="toast-body">We Will Process the Query ASAP.</div>
+                        <div className="toast-body">Your request has been processed successfully.</div>
                         </div>
                     </div>
                 </div>
