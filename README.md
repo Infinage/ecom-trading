@@ -2,9 +2,7 @@ Code Live on: https://ecom-trading.cyclic.app/
 
 ### TODO
 
-0. Show offerings in the My Products page and have option to add product. merchant/asdasd should show listing for that user minus the option to edit / add product on that user page
-0. OfferingState should be fetched during login and set to variable
-1. OfferingState to work offine, when user logs in push all items to offerings
+1. Product.jsx have option to navigate to editing the product if self owns it
 2. Update an offering, remove quantity - have provision to edit the item listed
 
 0. Failed login / Register to throw error messages - reference "Toast" at contact.jsx

@@ -74,6 +74,15 @@ const getUser = async (req, res) => {
             }
         }
 
+        // Additionally lets populate the user offerings with more fields
+        for (let index in user['offerings']){
+            let offering = user['offerings'][index];
+            let newOffering = (await Product.findById(offering)).toJSON();
+            
+            delete newOffering['user'];
+            user['offerings'][index] = newOffering;
+        }
+
         res.status(StatusCodes.OK).json(user);
     }
 }

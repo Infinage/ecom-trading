@@ -2,11 +2,33 @@ import { useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import offering from '../assets/offering.svg';
 import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { getUser } from '../services/user-auth';
+import { useState } from 'react';
 
 const Offering = () => {
     
     const { id } = useParams();
-    const offeringState = useSelector((state) => state.offering);
+    const userState = useSelector((state) => state.user);
+    const offeringReduxState = useSelector((state) => state.offering);
+
+    const [offeringState, setOfferingState] = useState([]);
+    const [merchantSelf, setMerchantSelf] = useState(true);
+
+    useEffect(() => {
+
+      const getUserOfferings = async () => {
+        if (userState.user.id !== id){
+          setOfferingState((await getUser(id))['offerings']);
+          setMerchantSelf(false);
+        } else {
+          setOfferingState(offeringReduxState);
+          setMerchantSelf(true);
+        }
+      }
+
+      getUserOfferings();
+    }, [id])
 
     const emptyOffering = () => {
         return (
@@ -19,7 +41,11 @@ const Offering = () => {
                         NO PRODUCTS LISTED
                         </h5>
                         <p className="card-text lead fs-3">
-                            <NavLink to="/new-product" className="text-decoration-none link-dark">LIST YOUR PRODUCTS</NavLink>
+                            {
+                            merchantSelf ? 
+                            <NavLink to="/new-product" className="text-decoration-none link-dark">LIST YOUR PRODUCTS</NavLink>: 
+                            "REQUEST MERCHANT TO LIST PRODUCTS"
+                            }
                         </p>
                     </div>
                     </div>
@@ -56,7 +82,7 @@ const Offering = () => {
                     <th scope="col">Description</th>
                     <th scope="col">Category</th>
                     <th scope="col">Stock Available</th>
-                    <th scope="col">Update</th>
+                    {merchantSelf && <th scope="col">Update</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -66,25 +92,25 @@ const Offering = () => {
                         <img
                           src={offering.image}
                           className="img-fluid img-thumbnail"
-                          alt={offering.name}
+                          alt={offering.title}
                         />
                       </td>
                       <td>
-                        <NavLink to={`/products/${product._id}`} className="text-decoration-none link-dark">
-                          {offering.name} <br/>
+                        <NavLink to={`/products/${offering._id}`} className="text-decoration-none link-dark">
+                          {offering.title} <br/>
                         </NavLink>
                       </td>
                       <td>{offering.description}</td>
                       <td>{offering.category}</td>
                       <td>{offering.count}</td>
-                      <td>
+                      { merchantSelf && <td>
                         <button
-                          className={`btn btn-outline-primary mx-2 px-2`}
+                          className={`btn btn-outline-danger mx-2 px-2`}
                           onClick={() => {}} 
                         >
-                          <i className="fa fa-plus"></i>
+                          <i className="fa fa-pencil"></i>
                         </button>
-                      </td>
+                      </td> }
                     </tr>
                 ))}
                 </tbody>
@@ -96,9 +122,7 @@ const Offering = () => {
     }
 
     return (
-        <div>
-            {emptyOffering()}
-        </div>
+        <div>{ offeringState.length > 0? offeringItems(): emptyOffering() }</div>
     );
 
 }

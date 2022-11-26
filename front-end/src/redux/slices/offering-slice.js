@@ -66,6 +66,13 @@ export const modifyOffering = createAsyncThunk(
 const offeringSlice = createSlice({
     name: "offering",
     initialState: initialState,
+    reducers: {
+        setOfferingItems: (state, action) => {
+            localStorage.setItem("offering", JSON.stringify(action.payload));
+            state = action.payload;
+            return state;
+        }
+    },
     extraReducers: builder => {
         builder.addCase(addOffering.fulfilled, (state, action) => {
             state = [...state, action.payload];
@@ -75,4 +82,5 @@ const offeringSlice = createSlice({
     }
 });
 
+export const {setOfferingItems} = offeringSlice.actions;
 export default offeringSlice.reducer;
