@@ -29,12 +29,12 @@ const Offering = () => {
     useEffect(() => {
 
       const getUserOfferings = async () => {
-        if (userState.user.id !== id){
-          setOfferingState((await getUser(id))['offerings']);
-          setMerchantSelf(false);
-        } else {
+        if (userState.user && userState.user.id === id){
           setOfferingState(offeringReduxState);
           setMerchantSelf(true);
+        } else {
+          setOfferingState((await getUser(id))['offerings']);
+          setMerchantSelf(false);
         }
       }
 
