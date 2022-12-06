@@ -3,14 +3,23 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useRef } from 'react';
 import { Toast } from 'bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { addOffering } from '../redux/slices/offering-slice';
+import { addOffering, modifyOffering } from '../redux/slices/offering-slice';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router';
+import { useState } from 'react';
 
 const ProductForm = () => {
 
     const offerings = useSelector(state => state.offering);
     const dispatch = useDispatch();
+
+    // OfferingIndex is passed as a state to "navigate", if index exists we use it to set values of the product form
+    let offeringIndex = useLocation()['state'];
     
+    console.log(useLocation());
+
+    offeringIndex = offeringIndex? Number(offeringIndex): null;
+    const [initialValues, setInitialValues] = useState( { title: '', category: '', count: '', price: '', image: '', description: '' });
     const toastRef = useRef();
 
     // To avoid calling useEffect on the first render
@@ -44,10 +53,21 @@ const ProductForm = () => {
     }
 
     const handleSubmit = async (values) => {
-        dispatch(addOffering(values));
+        if (offeringIndex !== null){
+            // Update offering
+            dispatch(modifyOffering({productId: offerings[offeringIndex]._id, offering: values}));
+
+        } else{
+            // Add new offering
+            dispatch(addOffering(values));
+        }
     }
 
     useEffect(() => {
+        
+        // Set the initial values from index and refresh the values everytime there is some change
+        if (offeringIndex != null) setInitialValues(offerings[offeringIndex]); 
+
         if (isMounted.current){
             const myToast = toastRef.current;
             const bsToast = new Toast(myToast, { autohide: true });
@@ -90,12 +110,13 @@ const ProductForm = () => {
                     <div className='col-md-6'>
                 
                         <Formik
-                            initialValues={{ name: '', category: '', count: '', price: '', image: '', description: '' }}
+                            initialValues={initialValues}
                             validateOnMount="true"
+                            enableReinitialize="true"
                             validate={values => {
                                 const errors = {};
 
-                                if (!values.name) { errors.name = 'Title must be provided.'; }
+                                if (!values.title) { errors.title = 'Title must be provided.'; }
                                 if (!values.category) {errors.category = 'Category must be provided.'; }
                                 if (!values.count || values.count <= 0) {errors.count = 'Invalid value entered for Stock Count.'; }
                                 if (!values.price || values.price <= 0) {errors.price = 'Invalid value entered for Price'; }
@@ -114,9 +135,9 @@ const ProductForm = () => {
                             {({ values, handleChange, handleSubmit, setValues, isSubmitting, dirty, isValid }) => (
                                 <Form>
 
-                                    <label htmlFor="name">Product Name:</label>
-                                    <Field type="text" name="name" autoComplete="off" className="form-control" placeholder="Enter Product Name"/>
-                                    <ErrorMessage name="name" component="div" className='text-danger'/>
+                                    <label htmlFor="title">Product Name:</label>
+                                    <Field type="text" name="title" autoComplete="off" className="form-control" placeholder="Enter Product Name"/>
+                                    <ErrorMessage name="title" component="div" className='text-danger'/>
 
                                     <label htmlFor="category">Category:</label>
                                     <Field component="select" id="category" name="category" className="form-control">

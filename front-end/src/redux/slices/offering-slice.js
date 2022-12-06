@@ -30,7 +30,7 @@ export const addOffering = createAsyncThunk(
                     method: "POST", 
                     headers: {"Content-Type": "application/json", ...authHeader()},
                     body: JSON.stringify({
-                        title: offering.name, 
+                        title: offering.title, 
                         category: offering.category, 
                         count: offering.count,
                         price: offering.price, 
@@ -41,8 +41,9 @@ export const addOffering = createAsyncThunk(
                 }
             );
 
-            if (resp.ok)
-                return offering;
+            if (resp.ok){
+                return await resp.json();
+            }
         }
 
         return thunkAPI.rejectWithValue();
@@ -51,15 +52,65 @@ export const addOffering = createAsyncThunk(
 
 export const removeOffering = createAsyncThunk(
     "offering/removeOffering",
-    async ({}, thunkAPI) => {
+    async ({index}, thunkAPI) => {
         
+        const user = thunkAPI.getState().user.user;
+        const offering = thunkAPI.getState().offering.at(index);
+
+        if (user && offering){
+
+            let resp = await fetch(
+                `${import.meta.env.VITE_BACKEND_URL}/products/${offering._id}`,
+                {
+                    method: "DELETE",
+                    headers: {"Content-Type": "application/json", ...authHeader()}
+                }
+            )
+
+            if (resp.ok){
+                resp = await resp.json();
+                if (resp.count === 0)
+                    return resp;
+                else 
+                    return thunkAPI.rejectWithValue();
+            }
+
+        } else {
+            thunkAPI.rejectWithValue();
+        }
+
     }
 );
 
 export const modifyOffering = createAsyncThunk(
     "offering/modifyOffering",
-    async ({}, thunkAPI) => {
-        
+    async ({productId, offering}, thunkAPI) => {
+
+        const user = thunkAPI.getState().user.user;
+
+        if (user) {
+            const resp = await fetch(
+                `${import.meta.env.VITE_BACKEND_URL}/products/${productId}`,
+                { 
+                    method: "PATCH", 
+                    headers: {"Content-Type": "application/json", ...authHeader()},
+                    body: JSON.stringify({
+                        title: offering.title, 
+                        category: offering.category, 
+                        count: offering.count,
+                        price: offering.price, 
+                        image: offering.image,
+                        description: offering.description,
+                    })
+                }
+            );
+
+            if (resp.ok){
+                return await resp.json();
+            }
+        }
+
+        return thunkAPI.rejectWithValue();
     }
 );
 
@@ -79,6 +130,16 @@ const offeringSlice = createSlice({
             localStorage.setItem("offering", JSON.stringify(state));
             return state;
         })
+        .addCase(modifyOffering.fulfilled, (state, action) => {
+            state = state.map(prod => prod._id === action.payload._id? action.payload: prod);
+            localStorage.setItem("offering", JSON.stringify(state));
+            return state;
+        })
+        .addCase(removeOffering.fulfilled, (state, action) => {
+            state = state.filter(prod => prod._id !== action.payload._id);
+            localStorage.setItem("offering", JSON.stringify(state));
+            return state;
+        });
     }
 });
 

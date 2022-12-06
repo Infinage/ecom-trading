@@ -25,7 +25,7 @@ const addOffering = async (req, res) => {
                 {new: true}
             );
 
-            res.status(StatusCodes.CREATED).json({productId: product._id, name: product.title, user: product.user});
+            res.status(StatusCodes.CREATED).json(product);
             
         } else {
             res.status(StatusCodes.BAD_REQUEST).json({message: "Product Schema validation has failed. " + validationResult.message});
@@ -71,6 +71,39 @@ const updateOffering = async (req, res) => {
     }
 }
 
+const deleteOffering = async (req, res) => {
+    const {id} = req.params;
+    let product = isValidObjectId(id) ? await Product.findById(id): null;
+
+    if (!product) {
+        res.status(StatusCodes.NOT_FOUND).json({message: `Product ID: ${id} doesn't exist.`});
+    } else if (req.user && req.user.userId === product.user.toString()){
+        if (!req.body.user || req.body.user === product.user.toString()){
+            
+            // Remove that product listing
+            product = await Product.findByIdAndDelete(id);
+
+            // Remove user association to that product 
+            const user = await User.findByIdAndUpdate(
+                req.user.userId, 
+                { $pull: {offerings: product._id} },
+                {new: true}
+            );
+            
+            // Converting to JSON for editing fields, we set the count as 0 after delisting
+            product = product.toJSON();
+            product.count = 0;
+            res.status(StatusCodes.OK).json(product);
+
+        } else {
+            res.status(StatusCodes.FORBIDDEN).json({message: "Cannot update the user ID"});
+        }
+    } else {
+        res.status(StatusCodes.FORBIDDEN).json({message: "User doesn't have sufficent access rights for this operation."});
+    }
+
+}
+
 const getAllProductCategories = async (req, res) => {
     const result = await Product.distinct("category");
     res.status(StatusCodes.OK).json({data: result, count: result.length});
@@ -86,4 +119,4 @@ const getProductsByCategory = async (req, res) => {
     }
 }
 
-module.exports = {getAllProducts, addOffering, getProductById, updateOffering, getAllProductCategories, getProductsByCategory}
+module.exports = {getAllProducts, addOffering, getProductById, updateOffering, deleteOffering, getAllProductCategories, getProductsByCategory}
