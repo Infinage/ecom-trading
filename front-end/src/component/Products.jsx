@@ -19,8 +19,8 @@ const Products = () => {
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
-      const response = await fetch(`/api/v1/products`);
-      const categoryResp = await fetch(`/api/v1/products/category`);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products`);
+      const categoryResp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/category`);
 
       if (componentMounted) {
         setData((await response.clone().json())['data']);

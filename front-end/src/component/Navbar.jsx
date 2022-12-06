@@ -6,6 +6,7 @@ import { userLogout } from '../redux/slices/user-slice';
 const Navbar = () => {
   const cartState = useSelector((state) => state.cart);
   const userState = useSelector((state) => state.user);
+  const offeringState = useSelector((state) => state.offering);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -63,12 +64,20 @@ const Navbar = () => {
               <NavLink to="/login" className="btn btn-outline-dark text-light">
               <i className="fa fa-sign-in me-1"></i>Login</NavLink>
               : 
+              <>
               <div className="btn btn-outline-dark text-light" onClick={handleLogout}>
               <i className="fa fa-sign-in me-1"></i>{' ' + userState.user.name}</div>
+              <NavLink
+                to={`/merchant/${userState.user.id}`}
+                className="btn btn-outline-dark text-light"
+              >
+                <i className="fa fa-shopping-basket me-1"></i> My Products ({offeringState.length})
+              </NavLink>
+              </>
             }
             <NavLink
               to="/cart"
-              className="btn btn-outline-dark ms-2 text-light"
+              className="btn btn-outline-dark text-light"
             >
               <i className="fa fa-shopping-cart me-1"></i> Cart ({cartState.length})
             </NavLink>

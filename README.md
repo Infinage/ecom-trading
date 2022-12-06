@@ -2,11 +2,13 @@ Code Live on: https://ecom-trading.cyclic.app/
 
 ### TODO
 
-0. Failed login / Register to throw error messages
+3. Fix show suggestion button on Product.jsx
+0. Failed login / Register to throw error messages - reference "Toast" at contact.jsx
 2. Fix shipping page / Order Page
     - If cart is empty, shipping shouldn't work
     - If cart is empty, order page should redirect to cart
     - Validation for credit card number and cvv
+3. If JWT has timed out, sign out and ask user to relogin
 3. After products are confirmed by buyer, seller should receive a mail and contents from his inventory be reduced
 4. Create error middlewares with proper error code / messages - backend, Create error pages - frontend
 5. Switch from buyer to seller perspective from the front end

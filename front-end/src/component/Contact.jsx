@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import contact from '../assets/contact.svg';
 const { Toast } = bootstrap;
 
@@ -7,8 +7,7 @@ const Contact = () => {
 
   const handleClick = () => {
     var myToast = toastRef.current;
-    var bsToast = bootstrap.Toast.getInstance(myToast);
-    bsToast = new Toast(myToast, { autohide: true });
+    var bsToast = new Toast(myToast, { autohide: true });
     bsToast.show();
   };
 

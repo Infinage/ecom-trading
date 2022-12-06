@@ -1,3 +1,8 @@
 h1, p {
   font-family: Lato;
 }
+
+#new-product-image{
+  max-width: 95%;
+  max-height: 50vh;
+}

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { pushToUserCart } from "../../services/product-util";
 import { register, login, logout, getUser } from "../../services/user-auth";
 import { delTotCart, setCartItems } from "./cart-slice";
+import { setOfferingItems } from "../../redux/slices/offering-slice";
 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -44,8 +45,9 @@ export const userLogin = createAsyncThunk(
 
             const user = await getUser(result.user.id);
 
-            // Backend to frontend pull
+            // Backend to frontend: pull
             thunkAPI.dispatch(setCartItems(user.cart ? user.cart: []));
+            thunkAPI.dispatch(setOfferingItems(user.offerings ? user.offerings: []));
             return result;
         }
         else return thunkAPI.rejectWithValue();

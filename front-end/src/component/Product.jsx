@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addCart } from '../redux/slices/cart-slice';
 import { useParams } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
@@ -11,6 +11,10 @@ const Product = () => {
   const [sug_prod, setSugProd] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sug_lod, setSugLoad] = useState(false);
+  const [merchantSelf, setMerchantSelf] = useState(false);
+
+  const userState = useSelector(state => state.user);
+  const offeringState = useSelector(state => state.offering);
 
   const dispatch = useDispatch();
   const addProduct = (product) => {
@@ -20,19 +24,21 @@ const Product = () => {
   useEffect(() => {
     const getProduct = async () => {
       setLoading(true);
-      const response = await fetch(`/api/v1/products/${id}`);
-      setProduct(await response.json());
+      let response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`);
+      response = await response.json();
+      setMerchantSelf(userState.user && userState.user.id === response.user);
+      setProduct(response);
       setLoading(false);
     };
 
     getProduct();
   }, []);
 
-  const handleClick = () => {
+  const handleSuggestionClick = () => {
     const fetchData = async () => {
       setSugLoad(true);
       const sug_response = await fetch(
-        `/api/v1/products/category/${product.category}`
+        `${import.meta.env.VITE_BACKEND_URL}/products/category/${product.category}`
       );
       setSugProd(await sug_response.json());
 
@@ -90,28 +96,34 @@ const Product = () => {
           />
         </div>
         <div className="col-md-6">
-          <h4 className="text-uppercase text-black-50">{product.category} | Seller: {product.user && product.user.slice(-5)}</h4>
+          <h4 className="text-uppercase text-black-50">
+            {product.category} | Merchant: &nbsp;
+                <NavLink className="text-decoration-none text-reset" to={`/merchant/${product.user}`}>
+                  {product.user && product.user.slice(-5)}
+                </NavLink>
+          </h4>
           <h1 className="display-5">{product.title}</h1>
           <p className="lead">
             {product.count > 0? `${product.count} left in Stock`: "Sold Out"}
           </p>
           <h3 className="display-6 fw-bold my-4">$ {product.price}</h3>
           <p className="lead">{product.description}</p>
-          <button
-            className="btn btn-outline-dark px-4 py-2"
-            onClick={() => addProduct(product)}
-          >
-            Add to Cart
-          </button>
-          <NavLink to="/cart" className="btn btn-dark ms-2 px-3 py-2">
-            Go to Cart
-          </NavLink>
-          <button
-            className="btn btn-outline-dark ms-2 px-3 py-2"
-            onClick={handleClick}
-          >
-            Show Suggestion
-          </button>
+
+          {merchantSelf? 
+          (
+          <>
+            <NavLink to='/new-product' state={offeringState.findIndex(off => off._id === id).toString()} className="btn btn-outline-dark ms-2 px-3 py-2">Modify Product</NavLink>
+            <NavLink to={`/merchant/${userState.user.id}`} className="btn btn-dark ms-2 px-3 py-2">View My Listings</NavLink>
+            <button className="btn btn-outline-dark ms-2 px-3 py-2" onClick={handleSuggestionClick}>View Similar Products</button>
+          </>
+          ): (
+          <>
+            <button className="btn btn-outline-dark px-4 py-2" onClick={() => addProduct(product)}>Add to Cart</button>
+            <NavLink to="/cart" className="btn btn-dark ms-2 px-3 py-2">Go to Cart</NavLink>
+            <button className="btn btn-outline-dark ms-2 px-3 py-2" onClick={handleSuggestionClick}>Show Suggestion</button>
+          </>
+          )}
+
         </div>
       </>
     );

@@ -27,7 +27,9 @@ const Cart = () => {
                 <h5 className="card-title display-4 fw-bolder mb-0">
                   YOUR CART IS EMPTY
                 </h5>
-                <p className="card-text lead fs-3">CHECK OUT ALL THE TRENDS</p>
+                <p className="card-text lead fs-3">
+                  <NavLink to="/products" className="text-decoration-none link-dark">CHECK OUT ALL THE TRENDS</NavLink>
+                </p>
               </div>
             </div>
           </div>
@@ -50,7 +52,6 @@ const Cart = () => {
   };
   const cartItems = () => {
     return (
-      <>
         <div className="container">
           <div className="row" style={{ padding: '10px' }}>
             <h3>Cart Items</h3>
@@ -106,7 +107,6 @@ const Cart = () => {
             </div>
           </div>
         </div>
-      </>
     );
   };
   const buttons = () => {
