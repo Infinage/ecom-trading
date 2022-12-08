@@ -25,7 +25,7 @@ export const addOffering = createAsyncThunk(
 
         if (user) {
             const resp = await fetch(
-                `/api/v1/products/`,
+                `${import.meta.env.VITE_BACKEND_URL}/products/`,
                 { 
                     method: "POST", 
                     headers: {"Content-Type": "application/json", ...authHeader()},
@@ -60,7 +60,7 @@ export const removeOffering = createAsyncThunk(
         if (user && offering){
 
             let resp = await fetch(
-                `/api/v1/products/${offering._id}`,
+                `${import.meta.env.VITE_BACKEND_URL}/products/${offering._id}`,
                 {
                     method: "DELETE",
                     headers: {"Content-Type": "application/json", ...authHeader()}
@@ -90,7 +90,7 @@ export const modifyOffering = createAsyncThunk(
 
         if (user) {
             const resp = await fetch(
-                `/api/v1/products/${productId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/products/${productId}`,
                 { 
                     method: "PATCH", 
                     headers: {"Content-Type": "application/json", ...authHeader()},

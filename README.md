@@ -39,3 +39,7 @@ product: title, price, description, category, image, count, user
 3. Buy products: Decrement user-offering-product_count accordingly, create invoice (PDF) & send mail to both parties
 4. Add / Update / Remove Endorsements for a seller
 5. update a user
+
+#### Pre Deployment Steps
+
+Frontend .env has vite configured. Replace all of "${import.meta.env.VITE_BACKEND_URL}" with its PROD equivalent relative URL.

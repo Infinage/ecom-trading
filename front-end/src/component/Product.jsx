@@ -24,7 +24,7 @@ const Product = () => {
   useEffect(() => {
     const getProduct = async () => {
       setLoading(true);
-      let response = await fetch(`/api/v1/products/${id}`);
+      let response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`);
       response = await response.json();
       setMerchantSelf(userState.user && userState.user.id === response.user);
       setProduct(response);
@@ -38,7 +38,7 @@ const Product = () => {
     const fetchData = async () => {
       setSugLoad(true);
       const sug_response = await fetch(
-        `/api/v1/products/category/${product.category}`
+        `${import.meta.env.VITE_BACKEND_URL}/products/category/${product.category}`
       );
       setSugProd(await sug_response.json());
 

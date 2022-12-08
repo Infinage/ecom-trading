@@ -8,9 +8,8 @@ export const pushToUserCart = async (products) => {
         body: JSON.stringify(products)
     }
     
-    let resp = await fetch(`/api/v1/user/modifyCart`, fetchOptions);
+    let resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/modifyCart`, fetchOptions);
     resp = await resp.json();
-    console.log(resp);
     return resp;
 
 }

@@ -7,7 +7,7 @@ export const handleOrder = createAsyncThunk(
     async (args, thunkAPI) => {
         thunkAPI.dispatch(delTotCart());
         let resp = await fetch(
-            `/api/v1/order/${thunkAPI.getState().user.user.id}`, 
+            `${import.meta.env.VITE_BACKEND_URL}/order/${thunkAPI.getState().user.user.id}`, 
             {method: "POST", headers: authHeader()}
         );
 

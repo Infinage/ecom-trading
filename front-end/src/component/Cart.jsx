@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { addCart, delCart } from '../redux/slices/cart-slice';
 
 import cart from '../assets/cart.svg';
+import { tokenUnexpired } from '../services/user-auth';
 
 const Cart = () => {
   const cartState = useSelector((state) => state.cart);
@@ -114,7 +115,7 @@ const Cart = () => {
       <>
         <div className="container">
           <div className="row">
-            {userState.user != null ? (
+            {userState.user != null && tokenUnexpired() ? (
               <NavLink
                 to="/shipping"
                 className={`btn btn-outline-dark mb-5 w-25 mx-auto ${cartState.some(prod => prod.quantity > prod.count)? 'disabled': ''}`}

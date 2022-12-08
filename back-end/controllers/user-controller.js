@@ -15,7 +15,11 @@ const register = async (req, res) => {
         if (!user){ 
             user = await User.create({ name, email, password, address, phone });   
             const token = user.createJWT();
-            res.status(StatusCodes.CREATED).json({user: {id: user._id, name: user.name, cartSize: user.cart.length}, token});
+            const expiresAt = new Date(new Date().getTime() + (process.env.JWT_LIFETIME.slice(0, -1) * 1000));
+            res.status(StatusCodes.CREATED).json({
+                user: {id: user._id, name: user.name, cartSize: user.cart.length}, 
+                expiresAt, token
+            });
         } else { // If user already found, reject the register request
             res.status(StatusCodes.CONFLICT).json({message: "The Mail ID already exists. Please proceed to login."});
         }
@@ -34,7 +38,11 @@ const login = async (req, res) => {
         const user = await User.findOne({email}).select("+password");
         if (user && await user.comparePassword(password)){
             const token = user.createJWT();
-            res.status(StatusCodes.OK).json({user: {id: user._id, name: user.name, cartSize: user.cart.length}, token});
+            const expiresAt = new Date(new Date().getTime() + (process.env.JWT_LIFETIME.slice(0, -1) * 1000));
+            res.status(StatusCodes.OK).json({
+                user: {id: user._id, name: user.name, cartSize: user.cart.length}, 
+                expiresAt, token
+            });
         } else {
             res.status(StatusCodes.UNAUTHORIZED).json({message: "User ID or the Password entered is incorrect."});
         }

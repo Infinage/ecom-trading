@@ -15,8 +15,6 @@ const ProductForm = () => {
 
     // OfferingIndex is passed as a state to "navigate", if index exists we use it to set values of the product form
     let offeringIndex = useLocation()['state'];
-    
-    console.log(useLocation());
 
     offeringIndex = offeringIndex? Number(offeringIndex): null;
     const [initialValues, setInitialValues] = useState( { title: '', category: '', count: '', price: '', image: '', description: '' });
