@@ -1,6 +1,19 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 
 const Footer = () => {
+
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const getCategories = async () => {
+      const categoryResp = await fetch(`/api/v1/products/category`);
+      setCategories((await categoryResp.json())['data']);
+    }
+
+    getCategories();
+  }, [])
+
   return (
     <div className="foot">
       <footer className=" row text-center text-lg-start bg-dark text-muted">
@@ -30,58 +43,39 @@ const Footer = () => {
             <div className="row mt-3">
               <div className="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                 <h6 className="text-uppercase fw-bold mb-4">
-                  <i className="fas fa-gem me-3"></i> E-Cart Shop
+                  <i className="fa fa-diamond"></i> E-Cart Shop
                 </h6>
                 <p>
-                  Shop were you can buy products you like. Order products & stay
-                  Happy.
+                  Buy the products you love & Sell the products that you once loved.
                 </p>
               </div>
 
               <div className="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
                 <h6 className="text-uppercase fw-bold mb-4">Products</h6>
-                <p>
-                  <a href="#!" className="text-reset">
-                    Electronics
-                  </a>
-                </p>
-                <p>
-                  <a href="#!" className="text-reset">
-                    Clothing
-                  </a>
-                </p>
-                <p>
-                  <a href="#!" className="text-reset">
-                    Bags & Footwear
-                  </a>
-                </p>
-                <p>
-                  <a href="#!" className="text-reset">
-                    Beauty & Health
-                  </a>
-                </p>
+                {categories.map(cat => (
+                  <p key={cat}>
+                    <a href={`#/products?category=${cat}`} className="text-reset text-decoration-none">
+                      {cat}
+                    </a>
+                  </p>
+                ))}
               </div>
 
               <div className="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
                 <h6 className="text-uppercase fw-bold mb-4">Useful links</h6>
                 <p>
-                  <a href="#!" className="text-reset">
-                    Pricing
+                  <a href="#/contact" className="text-reset text-decoration-none">
+                    Contact Us
                   </a>
                 </p>
                 <p>
-                  <a href="#!" className="text-reset">
-                    Settings
+                  <a href="#/register" className="text-reset text-decoration-none">
+                    Register
                   </a>
                 </p>
                 <p>
-                  <a href="#!" className="text-reset">
-                    Orders
-                  </a>
-                </p>
-                <p>
-                  <a href="#!" className="text-reset">
-                    Help
+                  <a href="#/products" className="text-reset text-decoration-none">
+                    Products
                   </a>
                 </p>
               </div>
@@ -89,18 +83,14 @@ const Footer = () => {
               <div className="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
                 <h6 className="text-uppercase fw-bold mb-4">Contact</h6>
                 <p>
-                  <i className="bi bi-house-door-fill me-3"></i> New York, NY
-                  10012, US
+                  <i className="bi bi-house-door-fill me-3"></i> Chennai, India
                 </p>
                 <p>
                   <i className="bi bi-envelope me-3"></i>
-                  query@ecartshop.com
+                  query@deesa.com
                 </p>
                 <p>
-                  <i className="bi bi-phone me-3"></i> + 01 234 567 88
-                </p>
-                <p>
-                  <i className="bi bi-printer-fill me-3"></i> + 01 234 567 89
+                  <i className="bi bi-phone me-3"></i> +91 987654321
                 </p>
               </div>
             </div>
@@ -110,12 +100,12 @@ const Footer = () => {
           className="text-center p-4"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.05)' }}
         >
-          © 2021 Copyright:
+          © 2022 Copyright: &nbsp;
           <a
-            className="text-reset fw-bold"
-            href="https://react-gzh6x2.stackblitz.io/"
+            className="text-reset text-decoration-none"
+            href="https://github.com/Infinage"
           >
-            MyOwnBuild.com
+            Deesa Consulting Services
           </a>
         </div>
       </footer>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import { addCart } from '../redux/slices/cart-slice';
 import { useDispatch } from 'react-redux';
@@ -10,6 +10,9 @@ const Products = () => {
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
   let componentMounted = true;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryQuery = searchParams.get("category")
 
   const dispatch = useDispatch();
   const addProduct = (item) => {
@@ -36,6 +39,10 @@ const Products = () => {
 
     getProducts();
   }, []);
+
+  useEffect(() => {
+    if (categoryQuery) filterProduct(categoryQuery);
+  }, [searchParams])
 
   const Loading = () => {
     return (

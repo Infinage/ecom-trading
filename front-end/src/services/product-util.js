@@ -10,7 +10,6 @@ export const pushToUserCart = async (products) => {
     
     let resp = await fetch(`/api/v1/user/modifyCart`, fetchOptions);
     resp = await resp.json();
-    console.log(resp);
     return resp;
 
 }

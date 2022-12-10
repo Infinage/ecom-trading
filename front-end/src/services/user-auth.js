@@ -1,9 +1,9 @@
 export const register = async (name, email, password, address, phone) => {
-    
+
     let registerOptions = {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({name, password, email, phone,address})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, password, email, phone, address })
     }
 
     let resp = await fetch(`/api/v1/user/register`, registerOptions);
@@ -20,8 +20,8 @@ export const login = async (email, password) => {
 
     let loginOptions = {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({email, password})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
     }
 
     let resp = await fetch(`/api/v1/user/login`, loginOptions);
@@ -31,7 +31,7 @@ export const login = async (email, password) => {
     if (statusOk) localStorage.setItem("user", JSON.stringify(resp));
 
     return resp;
-    
+
 }
 
 export const logout = () => {
@@ -46,16 +46,21 @@ export const getUser = async (userId) => {
         method: "GET",
         headers: authHeader(),
     }
-    
+
     let resp = await fetch(`/api/v1/user/${userId}`, fetchOptions);
     resp = await resp.json();
     return resp;
 
 }
 
+export const tokenUnexpired = () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user && new Date(user.expiresAt) > new Date();
+}
+
 export const authHeader = () => {
     // We call this function whenever we are making a backend call that requires auth
     const user = JSON.parse(localStorage.getItem('user'));
-    if (user && user.token) { return { Authorization: 'Bearer ' + user.token }; } 
+    if (user && user.token && tokenUnexpired()) { return { Authorization: 'Bearer ' + user.token }; }
     else { return {}; }
 }

@@ -13,12 +13,13 @@ const user = JSON.parse(localStorage.getItem('user'));
     "name": "ABC",
     "cartSize": 2
   },
+  "expiresAt": 2022-12-08T14:21:11.077Z,
   "token": "asdasd1asd12ads"
 }
 */
 const initialState = user
   ? { ...user }
-  : { user: null, token: null };
+  : { user: null, token: null, expiresAt: null };
 
 export const userRegister = createAsyncThunk(
     "user/register", 
@@ -28,7 +29,7 @@ export const userRegister = createAsyncThunk(
         
         // Return value is the action payload
         if (result.user) return result; 
-        else return thunkAPI.rejectWithValue();
+        else return thunkAPI.rejectWithValue(result.message);
 
     }
 )
@@ -86,26 +87,31 @@ const userSlice = createSlice({
             userRegister.fulfilled, (state, action) => {
                 state.user = action.payload.user;
                 state.token = action.payload.token;
-        }).addCase(
-            // If user registration has failed
-            userRegister.rejected, (state, action) => {
-                state.user = null;
-                state.token = null;
+                state.expiresAt = action.payload.expiresAt;
         }).addCase(
             // If user login is successful
             userLogin.fulfilled, (state, action) => {
                 state.user = action.payload.user;
                 state.token = action.payload.token;
-        }).addCase(
-            // If user login has failed
-            userLogin.rejected, (state, action) => {
-                state.user = null;
-                state.token = null;
+                state.expiresAt = action.payload.expiresAt;
         }).addCase(
             // If user logout is successful
             userLogout.fulfilled, (state, action) => {
                 state.user = null;
                 state.token = null;
+                state.expiresAt = null;
+        }).addCase(
+            // If user registration has failed
+            userRegister.rejected, (state, action) => {
+                state.user = null;
+                state.token = null;
+                state.expiresAt = null;
+        }).addCase(
+            // If user login has failed
+            userLogin.rejected, (state, action) => {
+                state.user = null;
+                state.token = null;
+                state.expiresAt = null;
         })
     }
 

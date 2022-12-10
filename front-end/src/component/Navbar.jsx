@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogout } from '../redux/slices/user-slice';
+import { tokenUnexpired } from '../services/user-auth';
 
 const Navbar = () => {
   const cartState = useSelector((state) => state.cart);
@@ -60,25 +61,23 @@ const Navbar = () => {
           </ul>
           <div className="buttons">
             {
-              userState.user == null ? 
+              (userState.user == null || !tokenUnexpired()) ? 
+
               <NavLink to="/login" className="btn btn-outline-dark text-light">
-              <i className="fa fa-sign-in me-1"></i>Login</NavLink>
+                <i className="fa fa-sign-in me-1"></i>Login
+              </NavLink>
               : 
               <>
               <div className="btn btn-outline-dark text-light" onClick={handleLogout}>
-              <i className="fa fa-sign-in me-1"></i>{' ' + userState.user.name}</div>
-              <NavLink
-                to={`/merchant/${userState.user.id}`}
-                className="btn btn-outline-dark text-light"
-              >
+                <i className="fa fa-sign-in me-1"></i>{' ' + userState.user.name}
+              </div>
+              <NavLink to={`/merchant/${userState.user.id}`} className="btn btn-outline-dark text-light">
                 <i className="fa fa-shopping-basket me-1"></i> My Products ({offeringState.length})
               </NavLink>
               </>
+
             }
-            <NavLink
-              to="/cart"
-              className="btn btn-outline-dark text-light"
-            >
+            <NavLink to="/cart" className="btn btn-outline-dark text-light">
               <i className="fa fa-shopping-cart me-1"></i> Cart ({cartState.length})
             </NavLink>
           </div>

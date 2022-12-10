@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import offering from '../assets/offering.svg';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { getUser } from '../services/user-auth';
+import { getUser, tokenUnexpired } from '../services/user-auth';
 import { useState } from 'react';
 import { removeOffering } from '../redux/slices/offering-slice';
 
@@ -18,7 +18,7 @@ const Offering = () => {
     const offeringReduxState = useSelector((state) => state.offering);
 
     const [offeringState, setOfferingState] = useState([]);
-    const [merchantSelf, setMerchantSelf] = useState(true);
+    const [merchantSelf, setMerchantSelf] = useState(false);
 
     const handleDelistProduct = (index) => {
       if (confirm("Your customers would no longer be able to see this Product. Are you sure you wish to delist this Item?")){
@@ -29,7 +29,7 @@ const Offering = () => {
     useEffect(() => {
 
       const getUserOfferings = async () => {
-        if (userState.user && userState.user.id === id){
+        if (userState.user && userState.user.id === id && tokenUnexpired()){
           setOfferingState(offeringReduxState);
           setMerchantSelf(true);
         } else {
