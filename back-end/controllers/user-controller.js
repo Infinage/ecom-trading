@@ -38,7 +38,7 @@ const login = async (req, res) => {
         const user = await User.findOne({email}).select("+password");
         if (user && await user.comparePassword(password)){
             const token = user.createJWT();
-            const expiresAt = new Date(new Date().getTime() + (process.env.JWT_LIFETIME.slice(0, -1) * 1000));
+            const expiresAt = new Date(new Date().getTime() + (process.env.JWT_LIFETIME.slice(0, -1) * 60 * 1000));
             res.status(StatusCodes.OK).json({
                 user: {id: user._id, name: user.name, cartSize: user.cart.length}, 
                 expiresAt, token
