@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf ./node_modules/*; rm -rf dist/* rm -rf ../back-end/public/*",
     "dev": "vite",
-    "build": "vite build; cp -rf ./dist/* ../back-end/public",
+    "build": "vite build; rm -rf ../back-end/public && mkdir -p ../back-end/public ; cp -rf ./dist/* ../back-end/public",
     "preview": "vite preview"
   },
   "dependencies": {
