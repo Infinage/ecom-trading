@@ -6,7 +6,7 @@ export const register = async (name, email, password, address, phone) => {
         body: JSON.stringify({ name, password, email, phone, address })
     }
 
-    let resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/register`, registerOptions);
+    let resp = await fetch(`/api/v1/user/register`, registerOptions);
     let statusOk = resp.ok;
     resp = await resp.json();
 
@@ -24,11 +24,9 @@ export const login = async (email, password) => {
         body: JSON.stringify({ email, password })
     }
 
-    let resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/login`, loginOptions);
+    let resp = await fetch(`/api/v1/user/login`, loginOptions);
     let statusOk = resp.ok;
     resp = await resp.json();
-
-    console.log(resp);
 
     if (statusOk) localStorage.setItem("user", JSON.stringify(resp));
 
@@ -49,7 +47,7 @@ export const getUser = async (userId) => {
         headers: authHeader(),
     }
 
-    let resp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/${userId}`, fetchOptions);
+    let resp = await fetch(`/api/v1/user/${userId}`, fetchOptions);
     resp = await resp.json();
     return resp;
 

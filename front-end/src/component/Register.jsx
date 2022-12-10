@@ -1,104 +1,113 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { userRegister } from '../redux/slices/user-slice';
 import { useDispatch } from 'react-redux';
+import { ErrorMessage, Field, Formik, Form } from 'formik';
 
 const Register = () => {
-  const [name, setName] = useState();
-  const [password, setPassword] = useState();
-  const [email, setEmail] = useState();
-  const [phone, setPhone] = useState();
-  const [address, setAddress] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = () => {    
-    dispatch(
-      userRegister({
-        name: name,
-        password: password,
-        email: email,
-        phone: phone,
-        address: address
-      })
-    );
-    navigate('/');
-  };
   return (
     <div className="container" style={{ padding: '20px' }}>
-      <form>
-        <div className="mb-3">
-          <label for="exampleName" className="form-label">
-            Name
-          </label>
-          <input
-            value={name}
-            type="name"
-            className="form-control"
-            id="exampleName"
-            aria-describedby="emailHelp"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label for="exampleInputEmail1" className="form-label">
-            Email address
-          </label>
-          <input
-            value={email}
-            type="email"
-            className="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label for="exampleInputPassword1" className="form-label">
-            Password
-          </label>
-          <input
-            value={password}
-            type="password"
-            className="form-control"
-            id="exampleInputPassword1"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
 
-        <div className="mb-3">
-          <label for="exampleAddress" className="form-label">
-            Address
-          </label>
-          <input
-            value={address}
-            type="text"
-            className="form-control"
-            id="exampleAddress"
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
+      <Formik 
+        initialValues={{"name": "", "email": "", "password": "", "address": "", "phone": ""}}
+        validate={(values) => {
+          const errors = {};
+          if (!values.name) { errors.name = '* Required'; }
+          if (!values.address) {errors.address = '* Required'; }
 
-        <div className="mb-3">
-          <label for="exampleTel" className="form-label">
-            Phone
-          </label>
-          <input
-            value={phone}
-            type="tel"
-            className="form-control"
-            id="exampleTel"
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </div>
+          if (!values.email) {
+            errors.email = '* Required'; 
+          } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)){
+            errors.email = '* Invalid email address';
+          }
 
-        <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
-          Register
-        </button>
-        <NavLink to="/login" className="btn btn-dark" style={{ margin: '5px' }}>
-          Already user? Sign in
-        </NavLink>
-      </form>
+          if (!values.password) {
+            errors.password = '* Required'; 
+          } else if (!/^(?=.*\d)(?=.*[a-z])(?=.*[^a-zA-Z0-9])(?!.*\s).{7,15}$/.test(values.password)){
+            errors.password = "* Weak Password"
+          }
+          
+          if (!values.phone) {
+            errors.phone = '* Required'; 
+          } else if (!/^\d{10}$/.test(values.phone)){
+            errors.phone = "* not a valid phone number"
+          }
+
+          return errors;
+        }}
+        onSubmit={async ({name, password, email, address, phone}, {resetForm, setStatus}) => {    
+          const registerResult = await dispatch(
+            userRegister({
+              name: name,
+              password: password,
+              email: email,
+              phone: phone,
+              address: address
+            })
+          );
+
+          if (registerResult.meta.requestStatus === "fulfilled"){
+            navigate('/');
+          } else {
+            resetForm();
+            setStatus({message: registerResult.payload});
+          }
+        }}
+      >
+
+        {({ values, handleChange, handleSubmit, setValues, isSubmitting, dirty, isValid, status }) => (
+        <Form>
+
+          <div className="mb-3">
+            <label for="name" className="form-label">
+              Name: <ErrorMessage name="name" component="span" className='text-danger'/>
+            </label>
+            <Field type="text" name="name" autoComplete="off" className="form-control"/>
+          </div>
+
+          <div className="mb-3">
+            <label for="text" className="form-label">
+              Email Address: <ErrorMessage name="email" component="span" className='text-danger'/>
+            </label>
+            <Field type="email" name="email" autoComplete="off" className="form-control"/>
+          </div>
+
+          <div className="mb-3">
+            <label for="password" className="form-label">
+              Password: <ErrorMessage name="password" component="span" className='text-danger'/>
+            </label>
+            <Field type="password" name="password" autoComplete="off" className="form-control"/>
+          </div>
+
+          <div className="mb-3">
+            <label for="address" className="form-label">
+              Address: <ErrorMessage name="address" component="span" className='text-danger'/>
+            </label>
+            <Field type="text" name="address" autoComplete="off" className="form-control"/>
+          </div>
+
+          <div className="mb-3">
+            <label for="phone" className="form-label">
+              Phone Number: <ErrorMessage name="phone" component="span" className='text-danger'/>
+            </label>
+            <Field type="text" name="phone" autoComplete="off" className="form-control"/>
+          </div>
+
+          {status && status.message && <div className='text-danger'>{status.message}</div> }
+
+          <button type="submit" disabled={!isValid} className="btn btn-primary">
+            Register
+          </button>
+          <NavLink to="/login" className="btn btn-dark" style={{ margin: '5px' }}>
+            Already user? Sign in
+          </NavLink>
+
+        </Form>
+        )}
+      </Formik>
     </div>
   );
 };

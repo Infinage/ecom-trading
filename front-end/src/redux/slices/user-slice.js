@@ -29,7 +29,7 @@ export const userRegister = createAsyncThunk(
         
         // Return value is the action payload
         if (result.user) return result; 
-        else return thunkAPI.rejectWithValue();
+        else return thunkAPI.rejectWithValue(result.message);
 
     }
 )

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import { addCart } from '../redux/slices/cart-slice';
 import { useDispatch } from 'react-redux';
@@ -11,6 +11,9 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
   let componentMounted = true;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryQuery = searchParams.get("category")
+
   const dispatch = useDispatch();
   const addProduct = (item) => {
     dispatch(addCart(item));
@@ -19,8 +22,8 @@ const Products = () => {
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products`);
-      const categoryResp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/category`);
+      const response = await fetch(`/api/v1/products`);
+      const categoryResp = await fetch(`/api/v1/products/category`);
 
       if (componentMounted) {
         setData((await response.clone().json())['data']);
@@ -36,6 +39,10 @@ const Products = () => {
 
     getProducts();
   }, []);
+
+  useEffect(() => {
+    if (categoryQuery) filterProduct(categoryQuery);
+  }, [searchParams])
 
   const Loading = () => {
     return (
