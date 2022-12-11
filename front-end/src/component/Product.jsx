@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addCart } from '../redux/slices/cart-slice';
-import { useParams } from 'react-router-dom';
-import { NavLink } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 
 const Product = () => {
   const { id } = useParams();
   const [product, setProduct] = useState([]);
-  const [sug_prod, setSugProd] = useState([]);
+  const [sugProd, setSugProd] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [sug_lod, setSugLoad] = useState(false);
+  const [sugLoad, setSugLoad] = useState(false);
   const [merchantSelf, setMerchantSelf] = useState(false);
 
   const userState = useSelector(state => state.user);
@@ -23,29 +22,28 @@ const Product = () => {
 
   useEffect(() => {
     const getProduct = async () => {
+
       setLoading(true);
-      let response = await fetch(`/api/v1/products/${id}`);
-      response = await response.json();
-      setMerchantSelf(userState.user && userState.user.id === response.user);
-      setProduct(response);
+      setSugLoad(true);
+
+      let prod = await fetch(`/api/v1/products/${id}`);
+      prod = await prod.json();
+      setMerchantSelf(userState.user && userState.user.id === prod.user);
+      setProduct(prod);
+
+      let suggestions = await fetch(`/api/v1/products/category/${prod.category}`); 
+      suggestions = (await suggestions.json());
+      if (suggestions['data']){
+        suggestions = suggestions['data'].filter(currProd => prod._id !== currProd._id).sort(() => 0.5 - Math.random()).slice(0, 5);
+        setSugProd(suggestions);
+      }
+
+      setSugLoad(false);
       setLoading(false);
     };
 
     getProduct();
-  }, []);
-
-  const handleSuggestionClick = () => {
-    const fetchData = async () => {
-      setSugLoad(true);
-      const sug_response = await fetch(
-        `/api/v1/products/category/${product.category}`
-      );
-      setSugProd(await sug_response.json());
-
-      setSugLoad(false);
-    };
-    fetchData();
-  };
+  }, [id]);
 
   const Loading = () => {
     return (
@@ -70,11 +68,19 @@ const Product = () => {
   const Soading = () => {
     return (
       <>
-        <div className="col py-4" style={{ lineHeight: 2 }}>
+        <div className="col md-4" style={{
+              display: 'flex',
+              height: 'auto',
+              width: 'auto',
+              padding: '10px',
+              flexWrap: 'warp',
+            }}>
+
           <Skeleton height={400} width={300} style={{ marginLeft: 5 }} />
           <Skeleton height={400} width={300} style={{ marginLeft: 5 }} />
           <Skeleton height={400} width={300} style={{ marginLeft: 5 }} />
           <Skeleton height={400} width={300} style={{ marginLeft: 5 }} />
+        
         </div>
       </>
     );
@@ -114,13 +120,11 @@ const Product = () => {
           <>
             <NavLink to='/new-product' state={offeringState.findIndex(off => off._id === id).toString()} className="btn btn-outline-dark ms-2 px-3 py-2">Modify Product</NavLink>
             <NavLink to={`/merchant/${userState.user.id}`} className="btn btn-dark ms-2 px-3 py-2">View My Listings</NavLink>
-            <button className="btn btn-outline-dark ms-2 px-3 py-2" onClick={handleSuggestionClick}>View Similar Products</button>
           </>
           ): (
           <>
             <button className="btn btn-outline-dark px-4 py-2" onClick={() => addProduct(product)}>Add to Cart</button>
             <NavLink to="/cart" className="btn btn-dark ms-2 px-3 py-2">Go to Cart</NavLink>
-            <button className="btn btn-outline-dark ms-2 px-3 py-2" onClick={handleSuggestionClick}>Show Suggestion</button>
           </>
           )}
 
@@ -130,9 +134,10 @@ const Product = () => {
   };
 
   const SuggestionProd = () => {
+
     return (
       <div className="row">
-        {sug_prod.map((prod) => (
+        {sugProd && sugProd.map((prod) => (
           <div
             className="col md-4"
             style={{
@@ -161,9 +166,9 @@ const Product = () => {
                 <p className="card-text ">${prod.price}</p>
               </div>
               <div className="card-footer bg-white">
-                <button className="btn btn-dark ms-2 px-3 py-2 ">
-                  Show Suggestion
-                </button>
+                <NavLink to={`/products/${prod._id}`} className="btn btn-dark ms-2 px-3 py-2">
+                  View Product
+                </NavLink>
               </div>
             </div>
           </div>
@@ -179,11 +184,11 @@ const Product = () => {
           {loading ? <Loading /> : <ShowProduct />}
         </div>
         <div className="row py-4">
-          {sug_lod ? (
-            <Soading />
+          {sugLoad ? (
+              <Soading />
           ) : (
             <>
-              <p>Similar Suggestion</p>
+              {sugProd.length > 0 && <p className='fst-italic'>Similar Suggestions</p>}
               <SuggestionProd />
             </>
           )}

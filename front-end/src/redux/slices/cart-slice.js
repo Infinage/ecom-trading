@@ -31,21 +31,29 @@ export const addCart = createAsyncThunk(
         const exists = thunkAPI.getState().cart.find((x) => x._id === product._id);
         const user = thunkAPI.getState().user.user;
 
-        if (user) {
-            if (!exists)
-                thunkAPI.dispatch(incrementCart());
+        // Either user shouldn't be logged in or the product shouldn't belong to the logged in user
+        if (!user || user.id !== product.user){
 
-            const resp = await fetch(
-                `/api/v1/user/modifyCart/${product._id}?` + new URLSearchParams({ op: 'ADD', qty: 1 }),
-                { method: "PATCH", headers: authHeader() }
-            );
-
-            if (resp.ok) {
-                thunkAPI.dispatch(setCartItems(await resp.json().data));
+            if (user) {
+                if (!exists)
+                    thunkAPI.dispatch(incrementCart());
+    
+                const resp = await fetch(
+                    `/api/v1/user/modifyCart/${product._id}?` + new URLSearchParams({ op: 'ADD', qty: 1 }),
+                    { method: "PATCH", headers: authHeader() }
+                );
+    
+                if (resp.ok) {
+                    thunkAPI.dispatch(setCartItems(await resp.json().data));
+                }
             }
+    
+            return product;
+
+        } else {
+            return thunkAPI.rejectWithValue();
         }
 
-        return product;
     }
 )
 

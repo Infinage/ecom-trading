@@ -115,6 +115,12 @@ const pushCart = async (req, res) => {
             }
             else if (await Product.exists({_id: prod._id})){
 
+                // Logic to ensure that items being pushed do not contain self owned items
+                const seller = await Product.findOne({_id: prod._id}, {user: 1});
+                if (user._id.toString() === seller.user.toString()){
+                    return res.status(StatusCodes.BAD_REQUEST).json({message: `A Seller cannot transact with his own items.`})
+                }
+
                 const index = user.cart.findIndex(currProd => currProd.product.toString() === prod._id.toString());
                 if (index === -1) { 
                     user.cart.push({product: prod._id, quantity: prod.quantity});

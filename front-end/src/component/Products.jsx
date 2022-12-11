@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation, useSearchParams } from 'react-router-dom';
+import { NavLink, useSearchParams } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import { addCart } from '../redux/slices/cart-slice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Products = () => {
   const [data, setData] = useState([]);
@@ -10,6 +10,8 @@ const Products = () => {
   const [filter, setFilter] = useState(data);
   const [loading, setLoading] = useState(false);
   let componentMounted = true;
+
+  const userState = useSelector(state => state.user);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryQuery = searchParams.get("category")
@@ -95,7 +97,7 @@ const Products = () => {
             })
           }
         </div>
-        {filter.map((product) => {
+        {filter.filter(product => !userState.user || product.user !== userState.user.id).map((product) => {
           return (
               <div
                 className="col-md-3 mb-4"

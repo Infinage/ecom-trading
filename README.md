@@ -2,7 +2,6 @@ Code Live on: https://ecom-trading.cyclic.app/
 
 ### TODO
 
-3. Fix show suggestion button on Product.jsx
 6. Settings page to update self (user) details, reset user password with an email, delete user
 2. Fix shipping page / Order Page
     - If cart is empty, shipping shouldn't work

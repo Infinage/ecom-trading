@@ -3,6 +3,7 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogout } from '../redux/slices/user-slice';
 import { tokenUnexpired } from '../services/user-auth';
+import { useEffect } from 'react';
 
 const Navbar = () => {
   const cartState = useSelector((state) => state.cart);
@@ -11,6 +12,12 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (userState.user && !tokenUnexpired()){
+      dispatch(userLogout());
+    }
+  }, [])
 
   const handleLogout = () => {
     if (confirm("Do you wish to logout?")){

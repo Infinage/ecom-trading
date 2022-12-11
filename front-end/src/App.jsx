@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import './style.css';
+import "react-loading-skeleton/dist/skeleton.css";
 
 import Home from './component/Home';
 import Navbar from './component/Navbar';

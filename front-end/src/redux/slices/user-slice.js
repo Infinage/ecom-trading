@@ -44,9 +44,8 @@ export const userLogin = createAsyncThunk(
             if (tempCart.length > 0)
                 await pushToUserCart(tempCart);
 
-            const user = await getUser(result.user.id);
-
             // Backend to frontend: pull
+            const user = await getUser(result.user.id);
             thunkAPI.dispatch(setCartItems(user.cart ? user.cart: []));
             thunkAPI.dispatch(setOfferingItems(user.offerings ? user.offerings: []));
             return result;
