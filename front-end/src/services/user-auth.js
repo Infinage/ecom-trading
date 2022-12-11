@@ -56,7 +56,7 @@ export const getUser = async (userId) => {
 
 export const tokenUnexpired = () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    return user && new Date(user.expiresAt) > new Date();
+    return user !== null && new Date(user.expiresAt) > new Date();
 }
 
 export const authHeader = () => {

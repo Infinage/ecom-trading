@@ -106,7 +106,7 @@ const Order = () => {
                 <div className="card">
                   <div className="card-header bg-success text-light d-flex align-items-center">
                   <NavLink to="/" className="text-decoration-none link-light">
-                    <i class="fa fa-2x fa-home me-2" aria-hidden="true"></i>
+                    <i className="fa fa-2x fa-home me-2" aria-hidden="true"></i>
                     Go Home
                   </NavLink>
                   </div>

@@ -34,7 +34,7 @@ const Product = () => {
       let suggestions = await fetch(`/api/v1/products/category/${prod.category}`); 
       suggestions = (await suggestions.json());
       if (suggestions['data']){
-        suggestions = suggestions['data'].filter(currProd => prod._id !== currProd._id).sort(() => 0.5 - Math.random()).slice(0, 5);
+        suggestions = suggestions['data'].filter(currProd => prod._id !== currProd._id).sort(() => 0.5 - Math.random()).slice(0, 4);
         setSugProd(suggestions);
       }
 
@@ -73,7 +73,7 @@ const Product = () => {
               height: 'auto',
               width: 'auto',
               padding: '10px',
-              flexWrap: 'warp',
+              flexWrap: 'wrap',
             }}>
 
           <Skeleton height={400} width={300} style={{ marginLeft: 5 }} />
@@ -89,13 +89,13 @@ const Product = () => {
   const ShowProduct = () => {
     return (
       <>
-        <div className="col-md-6">
+        <div className="col-md-6 d-flex justify-content-center">
           <img
             src={product.image}
             alt={product.title}
             style={{
               maxWidth: '100%',
-              height: '500px',
+              maxHeight: '500px',
               padding: '10px',
               textAlign: 'center',
             }}
@@ -139,13 +139,15 @@ const Product = () => {
       <div className="row">
         {sugProd && sugProd.map((prod) => (
           <div
-            className="col md-4"
+            className="col"
+            key={prod._id}
             style={{
               display: 'flex',
               height: 'auto',
               width: 'auto',
               padding: '10px',
-              flexWrap: 'warp',
+              flexWrap: 'wrap',
+              maxWidth: '250px'
             }}
           >
             <div className="card " style={{ width: '18 rem' }}>
@@ -162,7 +164,7 @@ const Product = () => {
                 }}
               />
               <div className="card-body">
-                <h5 className="card-title ">{prod.title}</h5>
+                <h5 className="card-title">{prod.title}</h5>
                 <p className="card-text ">${prod.price}</p>
               </div>
               <div className="card-footer bg-white">

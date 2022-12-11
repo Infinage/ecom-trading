@@ -102,7 +102,7 @@ const Products = () => {
               <div
                 className="col-md-3 mb-4"
                 key={product._id}
-                style={{ padding: '20px' }}
+                style={{ padding: '20px', maxWidth: '400px', minWidth: '300px' }}
               >
                 <div className="card h-100 text-center p-4">
                   <img

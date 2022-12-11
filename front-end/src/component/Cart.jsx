@@ -60,10 +60,10 @@ const Cart = () => {
               <table className="table table-image">
                 <thead>
                   <tr>
-                    <th scope="col">Image</th>
+                    <th scope="col" className='d-none d-md-table-cell'>Image</th>
                     <th scope="col">Product Name</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Price</th>
+                    <th scope="col" className='d-none d-sm-table-cell'>Quantity</th>
+                    <th scope="col" className='d-none d-sm-table-cell'>Price</th>
                     <th scope="col">Total</th>
                     <th scope="col">Add/Del</th>
                   </tr>
@@ -71,7 +71,7 @@ const Cart = () => {
                 <tbody>
                 {cartState.map((product) => (
                     <tr key={product._id}>
-                      <td style={{ width: '100px' }}>
+                      <td style={{ width: '100px' }} className='d-none d-md-table-cell'>
                         <img
                           src={product.image}
                           className="img-fluid img-thumbnail"
@@ -80,12 +80,12 @@ const Cart = () => {
                       </td>
                       <td>
                         <NavLink to={`/products/${product._id}`} className="text-decoration-none link-dark">
-                          {product.title} <br/>
+                            <span>{product.title}</span><br/>
                           {product.quantity >= product.count && <span className='badge bg-primary'>Only {product.count} in Stock</span>}
                         </NavLink>
                       </td>
-                      <td>{product.quantity}</td>
-                      <td>{product.price}</td>
+                      <td className='d-none d-sm-table-cell'>{product.quantity}</td>
+                      <td className='d-none d-sm-table-cell'>${product.price}</td>
                       <td>{product.quantity * product.price}</td>
                       <td>
                         <button

@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <div className="hero">
       <div className="row text-white bg-dark" style={{ padding: '20px' }}>
-        <div className="col-md-8">
+        <div className="col">
           <div className="align-items-end d-flex flex-column justify-content-center">
             <div className="container">
               <h5 className="card-title display-4 fw-bolder mb-0">

@@ -90,10 +90,10 @@ const Offering = () => {
                   <tr>
                     <th scope="col">Image</th>
                     <th scope="col">Product Name</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Category</th>
+                    <th scope="col" className='d-none d-lg-table-cell'>Description</th>
+                    <th scope="col" className='d-none d-md-table-cell'>Category</th>
                     <th scope="col">Stock Available</th>
-                    <th scope="col">Price</th>
+                    <th scope="col" className='d-none d-sm-table-cell'>Price</th>
                     {merchantSelf && <th scope="col">Update</th>}
                   </tr>
                 </thead>
@@ -112,10 +112,10 @@ const Offering = () => {
                           {offering.title}<br/>
                         </NavLink>
                       </td>
-                      <td>{offering.description}</td>
-                      <td>{offering.category}</td>
+                      <td className='d-none d-lg-table-cell'>{offering.description}</td>
+                      <td className='d-none d-md-table-cell'>{offering.category}</td>
                       <td>{offering.count}</td>
-                      <td>{offering.price}</td>
+                      <td className='d-none d-sm-table-cell'>${offering.price}</td>
                       { merchantSelf && <td>
                         <button
                           className={`btn btn-outline-dark mx-2 px-2`}

@@ -7,6 +7,8 @@ import { addOffering, modifyOffering } from '../redux/slices/offering-slice';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { useState } from 'react';
+import { tokenUnexpired } from '../services/user-auth';
+import { NavLink } from 'react-router-dom';
 
 const ProductForm = () => {
 
@@ -164,7 +166,11 @@ const ProductForm = () => {
                                     <Field component="textarea" name="description" className="form-control" placeholder="Enter Product Description"/>
                                     <ErrorMessage name="description" component="div" className='text-danger' /><br/> 
 
-                                    <button type="submit" disabled={!isValid} className='btn btn-dark'>Submit</button>
+                                    {
+                                    tokenUnexpired() ? 
+                                        <button type="submit" disabled={!isValid} className='btn btn-dark'>Submit</button> :
+                                        <NavLink type="button" disabled={!isValid} to="/login" className='btn btn-dark'>Submit</NavLink>
+                                    }
 
                                 </Form>
                             )}

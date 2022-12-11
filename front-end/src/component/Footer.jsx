@@ -50,7 +50,7 @@ const Footer = () => {
                 </p>
               </div>
 
-              <div className="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+              <div className="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4 d-none d-lg-block">
                 <h6 className="text-uppercase fw-bold mb-4">Products</h6>
                 {categories.map(cat => (
                   <p key={cat}>
@@ -61,7 +61,7 @@ const Footer = () => {
                 ))}
               </div>
 
-              <div className="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+              <div className="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4 d-none d-md-block">
                 <h6 className="text-uppercase fw-bold mb-4">Useful links</h6>
                 <p>
                   <a href="#/contact" className="text-reset text-decoration-none">
