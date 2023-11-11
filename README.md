@@ -1,40 +1,39 @@
-Code Live on: https://ecom-trading.cyclic.app/
+# Ecom-Trading
 
-### TODO
+Ecom-trading is a NodeJS/ReactJS-based e-commerce application where users can trade items with one another. While the initial design was created by a colleague, additional functionalities have been introduced to make changes persistent. Users can create accounts, list their products, and interact with each other in a trading environment. Your offerings remain hidden when you are trying to purchase items.
 
-6. Settings page to update self (user) details, reset user password with an email, delete user
-2. Fix shipping page / Order Page
-    - If cart is empty, shipping shouldn't work
-    - If cart is empty, order page should redirect to cart
-    - Validation for credit card number and cvv
-3. After products are confirmed by buyer, seller should receive a mail and contents from his inventory be reduced
-4. Create error middlewares with proper error code / messages - backend, Create error pages - frontend
-8. Payment gateway - between buyer and seller
-9. Chatbot integegration - Website support, maybe interact with website with the help of whatsapp / Telegram / Discord bots
-10. Maps integration - Embed the company's address on footer
-11. PWA / React Native
+Live demo (non-dockerized, Mongo Atlas): https://ecom-trading.cyclic.app/
 
-Login Using Redux Toolkit: https://www.bezkoder.com/react-redux-login-example-toolkit-hooks/
+## Table of Contents
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Future Plans](#future-plans)
 
-***
+## Project Structure
 
-### DB Structure:
+The project is organized into the following main components:
 
-user: name, email, password, rating, endorsements, cart[products], offerings[products]
-product: title, price, description, category, image, count, user
+- `./frontend`: Contains the ReactJS-based frontend code.
+- `./backend`: Contains the NodeJS-based backend code.
+- Docker files: Dockerized versions of the application for easy deployment.
 
-#### Functionalities:
+## Getting Started
 
-0. Register an user
-1. Login as a user
-3. List all offerings of a user
-4. Add / update an offering
-5. Add / remove product to user-cart
+1. Replace all `sample.env` files available with `.env` equivalents.
+2. If Docker isn't available, ensure that you update the `MONGO_URI` in `./backend/.env` with the correct URI that you have set up - either local or using MongoDB Atlas.
+3. Starting the Application
+- With Docker installed:
+    ```
+    docker-compose up
+    ```
+- Without Docker:
+    ```
+    npm run build
+    npm start
+    ```
 
-3. Buy products: Decrement user-offering-product_count accordingly, create invoice (PDF) & send mail to both parties
-4. Add / Update / Remove Endorsements for a seller
-5. update a user
-
-#### Pre Deployment Steps
-
-Frontend .env has vite configured. Replace all of "${import.meta.env.VITE_BACKEND_URL}" with its PROD equivalent relative URL.
+## Future Plans
+- Deploy dockerized code on Google cloud to explore GCP.
+- Implement product recommendations using machine learning.
+- Develop a full-blown cart functionality for users to transact with money.
+- Integrate a chatbot for website support and interaction through WhatsApp, Telegram, or Discord bots.

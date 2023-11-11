@@ -54,7 +54,7 @@ const Offering = () => {
                         <p className="card-text lead fs-3">
                             {
                             merchantSelf ? 
-                            <NavLink to="/new-product" className="text-decoration-none link-dark">LIST YOUR PRODUCTS</NavLink>: 
+                            <NavLink to="/new-product" className="text-decoration-none link-dark">👉 LIST YOUR PRODUCTS 👈</NavLink>: 
                             "REQUEST MERCHANT TO LIST PRODUCTS"
                             }
                         </p>
