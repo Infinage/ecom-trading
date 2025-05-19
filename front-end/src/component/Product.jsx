@@ -26,12 +26,12 @@ const Product = () => {
       setLoading(true);
       setSugLoad(true);
 
-      let prod = await fetch(`/api/v1/products/${id}`);
+      let prod = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`);
       prod = await prod.json();
       setMerchantSelf(userState.user && userState.user.id === prod.user);
       setProduct(prod);
 
-      let suggestions = await fetch(`/api/v1/products/category/${prod.category}`); 
+      let suggestions = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/category/${prod.category}`); 
       suggestions = (await suggestions.json());
       if (suggestions['data']){
         suggestions = suggestions['data'].filter(currProd => prod._id !== currProd._id).sort(() => 0.5 - Math.random()).slice(0, 4);

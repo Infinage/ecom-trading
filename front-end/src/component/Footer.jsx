@@ -7,7 +7,7 @@ const Footer = () => {
 
   useEffect(() => {
     const getCategories = async () => {
-      const categoryResp = await fetch(`/api/v1/products/category`);
+      const categoryResp = await fetch(`${import.meta.env.VITE_BACKEND_URL}/products/category`);
       setCategories((await categoryResp.json())['data']);
     }
 
