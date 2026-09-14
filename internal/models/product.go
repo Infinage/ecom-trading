@@ -25,10 +25,11 @@ type Product struct {
 
 // NewProduct performs validations and returns a new Product object
 func NewProduct(title, desc string, price float32, category ProductCategory,
-	imageUrl string) (*Product, error) {
+	imageUrl string, seller int64) (*Product, error) {
 
 	p := Product{Title: title, Description: desc, Price: price,
-		Category: category, Image: imageUrl}
+		Category: category, Image: imageUrl, StockCount: 1,
+		SellerID: seller}
 
 	if err := p.Validate(); err != nil {
 		return nil, err
@@ -49,6 +50,10 @@ func (p *Product) Validate() error {
 
 	if p.StockCount < 0 {
 		return fmt.Errorf("stock count must be >= 0")
+	}
+
+	if p.SellerID == 0 {
+		return fmt.Errorf("seller not set")
 	}
 
 	switch p.Category {

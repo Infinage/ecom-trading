@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 )
 
@@ -34,16 +35,23 @@ func (s *Store) GetUserByEmail(ctx context.Context, email string) (*User, error)
 
 // CreateUser persists a new user to DB and updates the object's ID.
 func (s *Store) CreateUser(ctx context.Context, u *User) error {
-	if u.ID != 0 {
-		return fmt.Errorf("user ID is not empty")
-	}
-
 	if err := u.Validate(); err != nil {
 		return fmt.Errorf("create user validation failed: %w", err)
 	}
 
-	query := "INSERT INTO users (name, email, password, address) VALUES(?, ?, ?, ?)"
-	res, err := s.db.ExecContext(ctx, query, u.Name, u.Email, u.password, u.Address)
+	var res sql.Result
+	var err error
+
+	switch u.ID {
+	case 0:
+		query := "INSERT INTO users (name, email, password, address) VALUES(?, ?, ?, ?)"
+		res, err = s.db.ExecContext(ctx, query, u.Name, u.Email, u.password, u.Address)
+
+	default:
+		query := "INSERT INTO users (id, name, email, password, address) VALUES(?, ?, ?, ?, ?)"
+		res, err = s.db.ExecContext(ctx, query, u.ID, u.Name, u.Email, u.password, u.Address)
+	}
+
 	if err != nil {
 		return err
 	}

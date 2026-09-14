@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var emailRegex = regexp.MustCompile(`^\w+@\w+\.\w+$`)
+var emailRegex = regexp.MustCompile(`^\S+@\S+\.\S+$`)
 
 type User struct {
 	ID       int64

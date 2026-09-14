@@ -26,6 +26,7 @@ func Test_NewProduct(t *testing.T) {
 		price    float32
 		category ProductCategory
 		imageUrl string
+		seller   int64
 		errMsg   string
 	}
 
@@ -37,6 +38,7 @@ func Test_NewProduct(t *testing.T) {
 			price:    1,
 			category: CategoryApparel,
 			imageUrl: "",
+			seller:   1,
 			errMsg:   "",
 		},
 		{
@@ -46,6 +48,7 @@ func Test_NewProduct(t *testing.T) {
 			price:    1,
 			category: CategoryApparel,
 			imageUrl: "",
+			seller:   1,
 			errMsg:   "title not set",
 		},
 		{
@@ -55,6 +58,7 @@ func Test_NewProduct(t *testing.T) {
 			price:    0,
 			category: CategoryApparel,
 			imageUrl: "",
+			seller:   1,
 			errMsg:   "price must be > 0",
 		},
 		{
@@ -64,13 +68,23 @@ func Test_NewProduct(t *testing.T) {
 			price:    1,
 			category: "",
 			imageUrl: "",
+			seller:   1,
 			errMsg:   "invalid product category \"\"",
+		},
+		{
+			name:     "Missing SellerID",
+			title:    "Title",
+			desc:     "Desc",
+			price:    1,
+			category: "",
+			imageUrl: "",
+			errMsg:   "seller not set",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := NewProduct(tt.title, tt.desc, tt.price, tt.category, tt.imageUrl)
+			_, err := NewProduct(tt.title, tt.desc, tt.price, tt.category, tt.imageUrl, tt.seller)
 			checkErrMsg(t, err, tt.errMsg)
 		})
 	}

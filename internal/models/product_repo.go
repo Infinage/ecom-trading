@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 )
 
@@ -85,10 +86,6 @@ func (s *Store) GetProductByID(ctx context.Context, id int64) (*Product, error) 
 
 // CreateProduct inserts a given product into DB, raises an error if ID is set.
 func (s *Store) CreateProduct(ctx context.Context, p *Product) error {
-	if p.ID != 0 {
-		return fmt.Errorf("product ID is not empty")
-	}
-
 	if err := p.Validate(); err != nil {
 		return fmt.Errorf("create product validation failed: %w", err)
 	}
@@ -96,16 +93,30 @@ func (s *Store) CreateProduct(ctx context.Context, p *Product) error {
 	// Ensure seller ID is valid
 	_, err := s.GetUserByID(ctx, p.SellerID)
 	if err != nil {
-		return fmt.Errorf("create product failed (seller not found): %w", err)
+		return fmt.Errorf("create product failed (seller %d not found): %w", p.SellerID, err)
 	}
 
-	query := `
-		INSERT INTO products (
-			title, description, price, category, image, stockcount, seller
-		) VALUES(?, ?, ?, ?, ?, ?, ?)
-	`
-	res, err := s.db.ExecContext(ctx, query, p.Title, p.Description, p.Price, p.Category,
-		p.Image, p.StockCount, p.SellerID)
+	var res sql.Result
+	switch p.ID {
+	case 0:
+		query := `
+			INSERT INTO products (
+				title, description, price, category, image, stockcount, seller
+			) VALUES(?, ?, ?, ?, ?, ?, ?)
+		`
+		res, err = s.db.ExecContext(ctx, query, p.Title, p.Description, p.Price, p.Category,
+			p.Image, p.StockCount, p.SellerID)
+
+	default:
+		query := `
+			INSERT INTO products (
+				id, title, description, price, category, image, stockcount, seller
+			) VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+		`
+		res, err = s.db.ExecContext(ctx, query, p.ID, p.Title, p.Description, p.Price,
+			p.Category, p.Image, p.StockCount, p.SellerID)
+	}
+
 	if err != nil {
 		return err
 	}
