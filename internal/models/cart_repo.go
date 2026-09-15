@@ -23,7 +23,7 @@ func (st *Store) CreateOrder(ctx context.Context, cart []CartItem) error {
 			row := tx.QueryRowContext(ctx, `SELECT id FROM users where id = ?`, userid)
 			// Check that the user exists
 			if err = row.Scan(); err != nil {
-				return fmt.Errorf("user #%d not found", userid)	
+				return fmt.Errorf("user #%d not found", userid)
 			}
 		} else if userid != item.UserID {
 			return fmt.Errorf("cart contains orders from multiple users")

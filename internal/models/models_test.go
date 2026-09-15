@@ -94,7 +94,7 @@ func Test_NewCartItem(t *testing.T) {
 	type TC struct {
 		uid    int64
 		pid    int64
-		qty    int
+		qty    uint
 		errMsg string
 	}
 
@@ -103,7 +103,6 @@ func Test_NewCartItem(t *testing.T) {
 		{uid: 0, pid: 1, qty: 1, errMsg: "missing user / product ID"},
 		{uid: 1, pid: 0, qty: 1, errMsg: "missing user / product ID"},
 		{uid: 1, pid: 1, qty: 0, errMsg: "quantity must be greater than 0"},
-		{uid: 1, pid: 1, qty: -10, errMsg: "quantity must be greater than 0"},
 	} {
 		t.Run(fmt.Sprintf("%v,%v,%d", tt.uid, tt.pid, tt.qty), func(t *testing.T) {
 			_, err := NewCartItem(tt.uid, tt.pid, tt.qty)

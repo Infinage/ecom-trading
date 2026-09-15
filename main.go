@@ -1,34 +1,35 @@
 package main
 
 import (
-	"context"
+	"embed"
 	"log"
+	"net/http"
 	"os"
+	"strconv"
 
-	"github.com/infinage/ecom-trading/internal/models"
+	"github.com/infinage/ecom-trading/internal/handlers"
 )
 
+//go:embed assets
+var assets embed.FS
+
 func main() {
-	st, err := models.NewStore("test.db")
+	// Seed data if env variable is set
+	seedDB, err := strconv.ParseBool(os.Getenv("POPULATE_SEED_DATA"))
 	if err != nil {
-		log.Fatalf("DB load fail: %v", err)
+		seedDB = false
 	}
 
-	ctx := context.Background()
-	if err = st.Init(ctx); err != nil {
-		log.Fatalf("DB init fail: %v", err)
-	}
-
-	f, err := os.Open("assets/data/seed.json")
+	app, err := handlers.NewApp("data.db", assets, seedDB)
 	if err != nil {
-		log.Fatalf("Failed to open seed file: %v", err)
+		log.Fatalf("Failed to init app: %v", err)
 	}
 
-	sst, err := models.Seed(ctx, f, st)
-	if err != nil {
-		log.Fatalf("Failed to load seed: %v", err)
-	}
+	addr := ":8080"
+	log.Println("Listening on ADDR:", addr)
 
-	log.Printf("Inserted %d/%d new users, %d/%d new products\n", sst.InsertedUsers,
-		sst.TotalUsers, sst.InsertedProducts, sst.TotalProducts)
+	mux := app.Routes()
+	if err = http.ListenAndServe(addr, mux); err != nil {
+		log.Fatal(err)
+	}
 }
