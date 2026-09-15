@@ -8,10 +8,10 @@ type CartItem struct {
 	ID        int64
 	UserID    int64
 	ProductID int64
-	Quantity  int
+	Quantity  uint
 }
 
-func NewCartItem(uid, pid int64, qty int) (*CartItem, error) {
+func NewCartItem(uid, pid int64, qty uint) (*CartItem, error) {
 	if uid == 0 || pid == 0 {
 		return nil, fmt.Errorf("missing user / product ID")
 	}

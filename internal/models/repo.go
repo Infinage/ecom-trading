@@ -30,5 +30,9 @@ func (s *Store) Init(ctx context.Context) error {
 		return fmt.Errorf("failed to init 'products' table: %w", err)
 	}
 
+	if err := s.initCartItemTable(ctx); err != nil {
+		return fmt.Errorf("failed to init 'cart_item' table: %w", err)
+	}
+
 	return nil
 }
