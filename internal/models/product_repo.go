@@ -40,7 +40,7 @@ func (s *Store) getProducts(ctx context.Context, query string,
 // GetAllProducts fetches all products found in DB.
 func (s *Store) GetAllProducts(ctx context.Context) ([]Product, error) {
 	query := `
-		SELECT id, title, description, price, category, image, count, seller 
+		SELECT id, title, description, price, category, image, stockcount, seller 
 		FROM products
 	`
 	return s.getProducts(ctx, query)
@@ -49,7 +49,7 @@ func (s *Store) GetAllProducts(ctx context.Context) ([]Product, error) {
 // GetProductsBySeller returns all products offered by seller.
 func (s *Store) GetProductsBySeller(ctx context.Context, seller int64) ([]Product, error) {
 	query := `
-		SELECT id, title, description, price, category, image, count, seller 
+		SELECT id, title, description, price, category, image, stockcount, seller 
 		FROM products WHERE seller = ?
 	`
 	return s.getProducts(ctx, query, seller)
@@ -58,7 +58,7 @@ func (s *Store) GetProductsBySeller(ctx context.Context, seller int64) ([]Produc
 // GetProductsByCategory returns all products belonging to a particular category.
 func (s *Store) GetProductsByCategory(ctx context.Context, category string) ([]Product, error) {
 	query := `
-		SELECT id, title, description, price, category, image, count, seller 
+		SELECT id, title, description, price, category, image, stockcount, seller 
 		FROM products WHERE category = ?
 	`
 	return s.getProducts(ctx, query, category)
