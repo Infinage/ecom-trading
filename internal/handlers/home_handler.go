@@ -5,8 +5,8 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
-	"time"
 
 	"github.com/infinage/ecom-trading/internal/models"
 )
@@ -17,10 +17,8 @@ type App struct {
 	st     *models.Store
 }
 
-var templateHelpers = template.FuncMap{
-	"getCurrentYear": func() string { return fmt.Sprint(time.Now().Year()) },
-}
-
+// NewApp intializes the ecom-trading app, setting up DB, seeding it 
+// when requested, initializing the templates, etc.
 func NewApp(dbpath string, assets embed.FS, seedDB bool) (*App, error) {
 	st, err := models.NewStore(dbpath)
 	if err != nil {
@@ -44,13 +42,35 @@ func NewApp(dbpath string, assets embed.FS, seedDB bool) (*App, error) {
 	return app, nil
 }
 
-func (app *App) handleHome(w http.ResponseWriter, r *http.Request) {
-	app.templ.ExecuteTemplate(w, "home", nil)
-}
-
+// Routes configures a set of routes for the http server to use.
 func (app *App) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /", app.handleHome)
 	mux.Handle("GET /assets/", http.FileServerFS(app.assets))
 	return mux
 }
+
+func (app *App) handleHome(w http.ResponseWriter, r *http.Request) {
+	products, err := app.st.GetAllProducts(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Get all the unique categories
+	categorySt := make(map[string]struct{})
+	var categories []string
+	for _, p := range products {
+		if _, ok := categorySt[string(p.Category)]; !ok {
+			categorySt[string(p.Category)] = struct{}{}
+			categories = append(categories, string(p.Category))
+		}
+	}
+
+	data := map[string]any {"Products": products, "Categories": categories}
+	err = app.templ.ExecuteTemplate(w, "index.html", data)
+	if err != nil {
+		log.Printf("Execute template fail: %v\n", err)
+	}
+}
+
