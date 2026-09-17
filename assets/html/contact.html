@@ -1,0 +1,91 @@
+{{define "Contact"}}
+<main class="flex flex-col flex-1" id="main" 
+  data-signals="{contact: {showpopup: false, timeoutid: 0}}"
+>
+  <!-- Hero -->
+  <div class="flex flex-col bg-zinc-800 text-white w-full p-4">
+    <h1 class="text-4xl font-bold uppercase">Any queries</h1>
+    <h2 class="text-2xl uppercase">Contact Us</h3>
+    <img src="assets/images/contact.svg" class="w-1/3 min-w-[300px]"/>
+  </div>
+
+  <!-- Contact us form -->
+  <form class="flex flex-col my-2 mx-16 gap-4" 
+    data-on:submit__prevent="
+      if (el.checkValidity()) {
+        clearTimeout($contact.timeoutid);
+        $contact.showpopup = true;
+        $contact.timeoutid = setTimeout(() => { $contact.showpopup = false; }, 5000);
+        el.reset();
+      }
+    "
+  >
+    <div class="flex flex-col">
+      <label class="text-gray-800" for="name">Name</label>
+      <input name="name" placeholder="Enter Name" autocapitalize="on" autocomplete="off" 
+      class="
+        p-2 border border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200
+        focus:ring-4
+      "/>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-gray-800" for="email">Email</label>
+      <input required name="email" type="email" autocomplete="off" placeholder="Enter Email" 
+      class="
+        p-2 border border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200
+        focus:ring-4
+      "/>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-gray-800" for="phone">Phone</label>
+      <input name="phone" type="tel" placeholder="Enter Mobile" autocomplete="off" 
+      class="
+        p-2 border border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200
+        focus:ring-4
+      "/>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-gray-800" for="phone">Query</label>
+      <textarea name="phone" placeholder="Enter your query" required rows="3" 
+        autocomplete="off" class="
+          p-2 border border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200
+          focus:ring-4
+        "></textarea>
+    </div>
+
+    <button class="w-20 h-10 px-2 py-1 rounded-md bg-zinc-800 text-white 
+      cursor-pointer hover:bg-zinc-800/80">Submit</button>
+  </form>
+
+  <!-- Popup modal -->
+  <div data-show="$contact.showpopup"
+    class="flex flex-col fixed bottom-6 right-6 border rounded-md overflow-hidden 
+      border-gray-400/50 shadow-gray-400 w-[25rem]"
+  >
+    <div class="flex justify-between bg-white text-gray-600/80 font-bold p-2">
+      <div class="flex items-center">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15c3.728 0 6.75-2.91 6.75-6.5S15.728 2 12 2 5.25 4.91 5.25 
+            8.5 8.272 15 12 15m3.79.61c.33-.17.71.08.71.45v4.85c0 .9-.63 
+            1.34-1.41.97l-2.68-1.27c-.23-.1-.59-.1-.82 0l-2.68 
+            1.27c-.78.36-1.41-.08-1.41-.98l.02-4.84c0-.37.39-.61.71-.45 
+            1.13.57 2.41.89 3.77.89s2.65-.32 3.79-.89" fill="currentColor"/>
+        </svg>
+        <span>Thanks</span>
+      </div>
+      <button class="cursor-pointer" 
+        data-on:click="clearTimeout($contact.timeoutid); $contact.showpopup = false;"
+      >
+        <svg class="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.01 6.697 12.707 12l5.303 5.303-.707.707L12 12.707 6.697 18.01l-.707-.707L11.293 12 5.99 6.697l.707-.707L12 11.293l5.303-5.303z"/>
+          <path fill="none" d="M0 0h24v24H0z"/>
+        </svg> 
+      </button>
+    </div>
+    <span class="bg-white/80 px-2 py-4">We Will Process the Query ASAP.</span>
+  </div>
+</main>
+{{end}}

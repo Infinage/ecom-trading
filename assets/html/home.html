@@ -1,3 +1,44 @@
+{{define "ProductSkeleton"}}
+<div class="flex flex-col p-4 border-gray-400/50 border rounded-sm animate-pulse">
+  <!-- Image placeholder -->
+  <div class="h-[250px] w-full bg-zinc-700/20 rounded"></div>
+  
+  <!-- Text placeholders -->
+  <div class="flex flex-col m-4 justify-center items-center gap-3">
+    <div class="h-5 bg-zinc-700/20 rounded w-3/4"></div>
+    <div class="h-5 bg-zinc-700/20 rounded w-1/4"></div>
+  </div>
+  
+  <!-- Button placeholders -->
+  <div class="flex justify-between mx-4 mt-auto">
+    <div class="h-7 w-12 bg-zinc-700/20 rounded-md"></div>
+    <div class="h-7 w-16 bg-zinc-700/20 rounded-md"></div>
+  </div>
+</div>
+{{end}}
+
+{{define "HomeSkeleton"}}
+<main class="flex flex-col flex-1" id="main" data-init="@get('/api/header/home')">
+  <div class="m-10 flex flex-col">
+    <!-- Categories placeholder -->
+    <div class="flex self-center gap-4 my-8 animate-pulse">
+      <div class="h-8 w-12 bg-zinc-700/20 rounded-md"></div>
+      <div class="h-8 w-24 bg-zinc-700/20 rounded-md"></div>
+      <div class="h-8 w-20 bg-zinc-700/20 rounded-md"></div>
+      <div class="h-8 w-28 bg-zinc-700/20 rounded-md"></div>
+    </div>
+
+    <!-- Product skeleton grid -->
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-8">
+      {{template "ProductSkeleton"}}
+      {{template "ProductSkeleton"}}
+      {{template "ProductSkeleton"}}
+      {{template "ProductSkeleton"}}
+    </div>
+  </div>
+</main>
+{{end}}
+
 {{define "Product"}}
 <div 
   data-show="['', '{{.Category}}'].includes($filters.category)"
@@ -60,7 +101,8 @@
 {{end}}
 
 {{define "Home"}}
-<div class="flex flex-col flex-1" id="main">
+<main class="flex flex-col flex-1" id="main">
+  {{if .ShowHero}}
   <!-- Hero Section -->
   <div class="bg-zinc-800 flex p-4 text-white justify-between">
     <div class="flex flex-col">
@@ -71,7 +113,8 @@
     </div>
     <img src="assets/images/home.svg" class="h-96"/>
   </div>
+  {{end}}
 
   {{template "Products" .}}
-</div>
+</main>
 {{end}}

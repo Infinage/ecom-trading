@@ -3,9 +3,9 @@
   <h1 class="text-2xl font-bold cursor-pointer">E-Cart Shop</h1>
   <nav class="flex flex-1">
     <ul class="flex gap-4">
-      <li class="cursor-pointer">Home</li>
-      <li class="cursor-pointer">Products</li>
-      <li class="cursor-pointer">Contact</li>
+      <li data-on:click="@get('/api/header/home')" class="cursor-pointer">Home</li>
+      <li data-on:click="@get('/api/header/products')" class="cursor-pointer">Products</li>
+      <li data-on:click="@get('/api/header/contact')" class="cursor-pointer">Contact</li>
     </ul>
   </nav>
   <div class="flex gap-4">
