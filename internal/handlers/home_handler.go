@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/infinage/ecom-trading/internal/models"
-	"github.com/starfederation/datastar-go/datastar"
 )
 
 type App struct {
@@ -46,16 +47,17 @@ func NewApp(dbpath string, assets embed.FS, seedDB bool) (*App, error) {
 // Routes configures a set of routes for the http server to use.
 func (app *App) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /", app.handleHome)
-	mux.HandleFunc("GET /api/header/home", app.handlerAPIHome(false))
-	mux.HandleFunc("GET /api/header/products", app.handlerAPIHome(true))
-	mux.HandleFunc("GET /api/header/contact", app.handleAPIContact)
+	mux.HandleFunc("GET /", app.handlerAPIHome(true))
+	mux.HandleFunc("GET /products/", app.handlerAPIHome(false))
+	mux.HandleFunc("GET /product/{id}/", app.handleAPIProduct)
+	mux.HandleFunc("GET /contact/", app.handleAPIContact)
 	mux.Handle("GET /assets/", http.FileServerFS(app.assets))
 	return mux
 }
 
-func (app *App) handleHome(w http.ResponseWriter, r *http.Request) {
-	err := app.templ.ExecuteTemplate(w, "index.html", nil)
+func (app *App) render(fragment string, w http.ResponseWriter) {
+	data := map[string]any{"Content": template.HTML(fragment)}
+	err := app.templ.ExecuteTemplate(w, "index.html", data)
 	if err != nil {
 		errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
@@ -63,7 +65,7 @@ func (app *App) handleHome(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *App) handlerAPIHome(productsOnly bool) func(w http.ResponseWriter, r *http.Request)  {
+func (app *App) handlerAPIHome(showHero bool) func(w http.ResponseWriter, r *http.Request)  {
 	return func(w http.ResponseWriter, r *http.Request) {
 		products, err := app.st.GetAllProducts(r.Context())
 		if err != nil {
@@ -80,11 +82,15 @@ func (app *App) handlerAPIHome(productsOnly bool) func(w http.ResponseWriter, r 
 				categories = append(categories, string(p.Category))
 			}
 		}
+		
+		// Check if any query params have been set
+		category := r.URL.Query().Get("category")
 
 		data := map[string]any {
 			"Products": products, 
 			"Categories": categories,
-			"ShowHero": strings.HasSuffix(r.URL.Path, "/home"),
+			"ShowHero": showHero,
+			"Category": category,
 		}
 
 		// Build the home template string into buffer 
@@ -96,8 +102,8 @@ func (app *App) handlerAPIHome(productsOnly bool) func(w http.ResponseWriter, r 
 			return
 		}
 
-		sse := datastar.NewSSE(w, r)
-		sse.PatchElements(buffer.String())
+		// Render the fragment
+		app.render(buffer.String(), w)
 	}
 }
 
@@ -110,6 +116,40 @@ func (app *App) handleAPIContact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sse := datastar.NewSSE(w, r)
-	sse.PatchElements(buffer.String())
+	// Render the fragment
+	app.render(buffer.String(), w)
+}
+
+func (app *App) handleAPIProduct(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		errMsg := fmt.Sprintf("Invalid ID passed: %v", err)
+		http.Error(w, errMsg, http.StatusBadRequest)
+		return
+	}
+
+	p, err := app.st.GetProductByID(r.Context(), id)
+	if err != nil {
+		errMsg := fmt.Sprintf("Could not retreive product: %v", err)
+		http.Error(w, errMsg, http.StatusNotFound)
+		return
+	}
+
+	// Samples to not show current item
+	samples, err := app.st.GetProductsByCategory(r.Context(), string(p.Category))
+	samples = slices.DeleteFunc(samples, func(p models.Product) bool { return p.ID == id })
+	if len(samples) > 4 {
+		samples = samples[:4]
+	}
+
+	var buffer strings.Builder
+	data := map[string]any{"Product": p, "Samples": samples}
+	err = app.templ.ExecuteTemplate(&buffer, "ProductPage", data)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to build ProductPage: %v", err)	
+		http.Error(w, errMsg, http.StatusInternalServerError)
+		return
+	}
+
+	app.render(buffer.String(), w)
 }
