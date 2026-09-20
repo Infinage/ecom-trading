@@ -7,8 +7,7 @@ import (
 )
 
 var templateHelpers = template.FuncMap{
-	"getCurrentYear": func() string { 
+	"getCurrentYear": func() string {
 		return strconv.Itoa(time.Now().Year())
 	},
 }
-

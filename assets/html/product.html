@@ -20,8 +20,17 @@
       <span class="text-gray-800/80 text-xl line-clamp-6">{{.Product.Description}}</span>
 
       <div class="flex gap-2 mt-auto mb-8">
-        <button class="w-32 border border-gray-400 rounded-md hover:bg-zinc-800
-          hover:text-white cursor-pointer">Add to Cart</button>
+        <button 
+          data-attr="{
+            disabled: '{{.Product.SellerID}}' == $user.id,
+            title: '{{.Product.SellerID}}' == $user.id? 'You are selling this': 'Add item to cart',
+          }"
+          class="
+            w-32 border border-gray-400 rounded-md cursor-pointer
+            hover:bg-zinc-800 hover:text-white disabled:cursor-not-allowed 
+            disabled:hover:bg-transparent disabled:hover:text-inherit
+          "
+        >Add to Cart</button>
         <button class="w-28 h-10 px-2 py-1 rounded-md bg-zinc-800 text-white 
           cursor-pointer hover:bg-zinc-800/80">Go to Cart</button>
       </div>

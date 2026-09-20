@@ -8,31 +8,52 @@
       <a href="/contact" class="cursor-pointer">Contact</a>
     </ul>
   </nav>
-  <div class="flex gap-4">
-    <button class="flex items-center cursor-pointer">
+  <div class="flex items-center gap-4">
+    <!-- LOGIN -->
+    <a class="flex items-center gap-1 cursor-pointer" href="/login" data-show="$user.id == 0">
       <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 32 32" version="1.1" 
         xmlns="http://www.w3.org/2000/svg">
         <path d="M12.219 26.156h6.094c1.156 0 2.125-0.406 2.875-1.188 0.75-0.75 1.219-1.75 1.219-2.875v-12.219c0-1.125-0.469-2.125-1.219-2.875s-1.75-1.188-2.875-1.188h-6.094v2.563h6.094c0.875 0 1.531 0.656 1.531 1.5v12.219c0 0.844-0.656 1.531-1.531 1.531h-6.094v2.531zM0 13.563v4.875c0 0.563 0.469 1.031 1.031 1.031h5.688v3.844c0 0.344 0.156 0.625 0.469 0.781 0.125 0.031 0.281 0.031 0.344 0.031 0.219 0 0.406-0.063 0.563-0.219l7.344-7.344c0.281-0.281 0.25-0.844 0-1.156l-7.344-7.313c-0.25-0.25-0.563-0.281-0.906-0.188-0.313 0.156-0.469 0.406-0.469 0.75v3.875h-5.688c-0.563 0-1.031 0.469-1.031 1.031z">
         </path>
       </svg>
       <span>Login</span>
+    </a>
+
+    <!-- MY PRODUCTS -->
+    <a class="flex cursor-pointer items-center gap-2" data-show="$user.id != 0" 
+      data-attr:href="'/user/' + $user.id" 
+    >
+      <svg fill="currentColor" class="h-5 w-5 pb-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
+        <path d="M405.3 192 320 0h-42.7l85.3 192zM234.7 0H192l-85.3 192h42.7zm-192 469.3c0 23.5 19.1 42.7 42.7 42.7h341.3c23.5 0 42.7-19.1 42.7-42.7l21.3-192H21.3zm320-149.3h42.7L384 469.3h-42.7zm-128 0h42.7v149.3h-42.7zm-85.4 0 21.3 149.3H128L106.7 320zm341.4-106.7H21.3C9.5 213.3 0 222.9 0 234.7V256h512v-21.3c0-11.8-9.5-21.4-21.3-21.4"/>
+      </svg>
+      <span>My Products <span data-text="'(' + $user.offering + ')'"></span></span>
+    </a>
+
+    <!-- LOGOUT -->
+    <button class="flex items-center cursor-pointer gap-1" 
+      data-on:click="confirm('Do you wish to logout?') && @post('/api/logout')" 
+      data-show="$user.id != 0"
+    >
+      <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <title>logout</title>
+        <path d="M0 9.875v12.219C0 23.219.469 24.219 1.219 25c.75.75 1.719 1.156 2.844 1.156h6.125v-2.531H4.063c-.844 0-1.5-.688-1.5-1.531V9.875c0-.844.656-1.5 1.5-1.5h6.125V5.812H4.063A3.94 3.94 0 0 0 1.219 7C.469 7.781 0 8.75 0 9.875m6.719 3.688v4.875c0 .563.5 1.031 1.063 1.031h5.656v3.844c0 .344.188.625.5.781.125.031.25.031.313.031a.76.76 0 0 0 .563-.219l7.344-7.344c.344-.281.313-.844 0-1.156l-7.344-7.313c-.438-.469-1.375-.188-1.375.563v3.875H7.783c-.563 0-1.063.469-1.063 1.031z"/>
+      </svg>
+      <span data-text="$user.name"></span>
     </button>
 
-    <button class="flex items-center gap-1 cursor-pointer">
+    <!-- CART -->
+    <a href="/cart" class="flex items-center gap-2 cursor-pointer">
       <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" 
         enable-background="new 0 0 52 52" xml:space="preserve" class="h-5 w-5">
       <g>
-        <path d="M20.1,26H44c0.7,0,1.4-0.5,1.5-1.2l4.4-15.4c0.3-1.1-0.5-2-1.5-2H11.5l-0.6-2.3c-0.3-1.1-1.3-1.8-2.3-1.8
-          H4.6c-1.3,0-2.5,1-2.6,2.3C1.9,7,3.1,8.2,4.4,8.2h2.3l7.6,25.7c0.3,1.1,1.2,1.8,2.3,1.8h28.2c1.3,0,2.5-1,2.6-2.3
-          c0.1-1.4-1.1-2.6-2.4-2.6H20.2c-1.1,0-2-0.7-2.3-1.7v-0.1C17.4,27.5,18.6,26,20.1,26z"/>
+        <path d="M20.1,26H44c0.7,0,1.4-0.5,1.5-1.2l4.4-15.4c0.3-1.1-0.5-2-1.5-2H11.5l-0.6-2.3c-0.3-1.1-1.3-1.8-2.3-1.8 H4.6c-1.3,0-2.5,1-2.6,2.3C1.9,7,3.1,8.2,4.4,8.2h2.3l7.6,25.7c0.3,1.1,1.2,1.8,2.3,1.8h28.2c1.3,0,2.5-1,2.6-2.3 c0.1-1.4-1.1-2.6-2.4-2.6H20.2c-1.1,0-2-0.7-2.3-1.7v-0.1C17.4,27.5,18.6,26,20.1,26z"/>
         <circle cx="20.6" cy="44.6" r="4"/>
         <circle cx="40.1" cy="44.6" r="4"/>
       </g>
       </svg>
-      <span>Cart <span>(0)</span>
+      <span>Cart <span data-text="'(' + $user.cart + ')'"></span>
       </span>
-    </button>
+    </a>
   </div>
 </header> 
 {{end}}
-

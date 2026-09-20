@@ -21,7 +21,7 @@ type User struct {
 // validatePassword ensures the following rules:
 //   - Length between [6, 16]
 //   - Atleast one letter, number & special character
-func validatePassword(password string) error {
+func ValidatePassword(password string) error {
 	if n := len(password); n < 6 || n > 16 {
 		return fmt.Errorf("password length must be between 6 and 16")
 	}
@@ -47,6 +47,15 @@ func validatePassword(password string) error {
 	return nil
 }
 
+// ValidateEmail returns error if the input string doesn't confirm email regex.
+// Pattern: `^\S+@\S+\.\S+$`
+func ValidateEmail(email string) error {
+	if !emailRegex.MatchString(email) {
+		return fmt.Errorf("invalid email: %q", email)
+	}
+	return nil
+}
+
 // NewUser creates a new user and auto hashes the password. ID will
 // be set only during DB write.
 func NewUser(name, email, password, address string) (*User, error) {
@@ -55,8 +64,8 @@ func NewUser(name, email, password, address string) (*User, error) {
 		return nil, fmt.Errorf("username or password not set")
 	}
 
-	if !emailRegex.MatchString(u.Email) {
-		return nil, fmt.Errorf("invalid email: %q", u.Email)
+	if err := ValidateEmail(u.Email); err != nil {
+		return nil, err
 	}
 
 	if err := u.SetPassword(password); err != nil {
@@ -74,7 +83,7 @@ func (u *User) ComparePassword(raw string) bool {
 
 // SetPassword takes in a raw password string, runs validation rules and encrypts it.
 func (u *User) SetPassword(password string) error {
-	if err := validatePassword(password); err != nil {
+	if err := ValidatePassword(password); err != nil {
 		return fmt.Errorf("password validation fail: %w", err)
 	}
 

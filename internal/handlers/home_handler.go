@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/infinage/ecom-trading/internal/models"
@@ -17,9 +15,10 @@ type App struct {
 	assets embed.FS
 	templ  *template.Template
 	st     *models.Store
+	sst    *models.SessionStore
 }
 
-// NewApp intializes the ecom-trading app, setting up DB, seeding it 
+// NewApp intializes the ecom-trading app, setting up DB, seeding it
 // when requested, initializing the templates, etc.
 func NewApp(dbpath string, assets embed.FS, seedDB bool) (*App, error) {
 	st, err := models.NewStore(dbpath)
@@ -40,24 +39,52 @@ func NewApp(dbpath string, assets embed.FS, seedDB bool) (*App, error) {
 		return nil, fmt.Errorf("template parse fail: %w", err)
 	}
 
-	app := &App{assets: assets, st: st, templ: templ}
+	app := &App{assets: assets, st: st, templ: templ, sst: models.NewSessionStore()}
 	return app, nil
 }
 
 // Routes configures a set of routes for the http server to use.
 func (app *App) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /", app.handlerAPIHome(true))
-	mux.HandleFunc("GET /products/", app.handlerAPIHome(false))
-	mux.HandleFunc("GET /product/{id}/", app.handleAPIProduct)
-	mux.HandleFunc("GET /contact/", app.handleAPIContact)
+
+	mux.HandleFunc("GET /{$}", app.handlerHomePage(true))
 	mux.Handle("GET /assets/", http.FileServerFS(app.assets))
+
+	mux.HandleFunc("GET /products/", app.handlerHomePage(false))
+	mux.HandleFunc("GET /product/{id}/", app.handleProductPage)
+	mux.HandleFunc("GET /contact/", app.handleContactPage)
+
+	mux.HandleFunc("GET /register/", app.handleRegisterPage)
+	mux.HandleFunc("GET /api/register/validate", app.handleAPIRegisterValidate)
+	mux.HandleFunc("POST /api/register", app.handleAPIRegister)
+
+	mux.HandleFunc("GET /login", app.handleLoginPage)
+	mux.HandleFunc("POST /api/login", app.handleAPILogin)
+	mux.HandleFunc("POST /api/logout", app.handleAPILogout)
+
 	return mux
 }
 
-func (app *App) render(fragment string, w http.ResponseWriter) {
+func (app *App) render(fragment string, w http.ResponseWriter, r *http.Request) {
+	// Embed the content into base layout
 	data := map[string]any{"Content": template.HTML(fragment)}
-	err := app.templ.ExecuteTemplate(w, "index.html", data)
+
+	// Extract cookie to populate the header details
+	cookie, err := r.Cookie("session_token")
+	if err == nil {
+		if sess, ok := app.sst.Get(cookie.Value); ok {
+			meta, err := app.st.GetUserMetaByID(r.Context(), sess.UserId)		
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			// Embed meta to be parsed by templates
+			data["Meta"] = meta
+		}
+	}
+
+	err = app.templ.ExecuteTemplate(w, "index.html", data)
 	if err != nil {
 		errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
@@ -65,7 +92,7 @@ func (app *App) render(fragment string, w http.ResponseWriter) {
 	}
 }
 
-func (app *App) handlerAPIHome(showHero bool) func(w http.ResponseWriter, r *http.Request)  {
+func (app *App) handlerHomePage(showHero bool) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		products, err := app.st.GetAllProducts(r.Context())
 		if err != nil {
@@ -82,18 +109,18 @@ func (app *App) handlerAPIHome(showHero bool) func(w http.ResponseWriter, r *htt
 				categories = append(categories, string(p.Category))
 			}
 		}
-		
+
 		// Check if any query params have been set
 		category := r.URL.Query().Get("category")
 
-		data := map[string]any {
-			"Products": products, 
+		data := map[string]any{
+			"Products":   products,
 			"Categories": categories,
-			"ShowHero": showHero,
-			"Category": category,
+			"ShowHero":   showHero,
+			"Category":   category,
 		}
 
-		// Build the home template string into buffer 
+		// Build the home template string into buffer
 		var buffer strings.Builder
 		err = app.templ.ExecuteTemplate(&buffer, "Home", data)
 		if err != nil {
@@ -103,12 +130,12 @@ func (app *App) handlerAPIHome(showHero bool) func(w http.ResponseWriter, r *htt
 		}
 
 		// Render the fragment
-		app.render(buffer.String(), w)
+		app.render(buffer.String(), w, r)
 	}
 }
 
-func (app *App) handleAPIContact(w http.ResponseWriter, r *http.Request) {
-	var buffer strings.Builder	
+func (app *App) handleContactPage(w http.ResponseWriter, r *http.Request) {
+	var buffer strings.Builder
 	err := app.templ.ExecuteTemplate(&buffer, "Contact", nil)
 	if err != nil {
 		errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
@@ -117,39 +144,5 @@ func (app *App) handleAPIContact(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render the fragment
-	app.render(buffer.String(), w)
-}
-
-func (app *App) handleAPIProduct(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-	if err != nil {
-		errMsg := fmt.Sprintf("Invalid ID passed: %v", err)
-		http.Error(w, errMsg, http.StatusBadRequest)
-		return
-	}
-
-	p, err := app.st.GetProductByID(r.Context(), id)
-	if err != nil {
-		errMsg := fmt.Sprintf("Could not retreive product: %v", err)
-		http.Error(w, errMsg, http.StatusNotFound)
-		return
-	}
-
-	// Samples to not show current item
-	samples, err := app.st.GetProductsByCategory(r.Context(), string(p.Category))
-	samples = slices.DeleteFunc(samples, func(p models.Product) bool { return p.ID == id })
-	if len(samples) > 4 {
-		samples = samples[:4]
-	}
-
-	var buffer strings.Builder
-	data := map[string]any{"Product": p, "Samples": samples}
-	err = app.templ.ExecuteTemplate(&buffer, "ProductPage", data)
-	if err != nil {
-		errMsg := fmt.Sprintf("Failed to build ProductPage: %v", err)	
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-
-	app.render(buffer.String(), w)
+	app.render(buffer.String(), w, r)
 }

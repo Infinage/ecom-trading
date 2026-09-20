@@ -1,0 +1,107 @@
+{{define "Register"}}
+<main class="flex flex-col flex-1" id="main">
+  <form 
+    class="flex flex-col gap-4 mx-16 my-4" 
+    data-signals="{
+      register: {
+        touched: {name: false, email: false, password: false},
+        _errors: {name: '', email: '', password: ''},
+        _formMessage: '', _formMessageStyle: '',
+      }
+    }"
+  >
+    <div class="flex flex-col gap-2">
+      <label class="text-gray-800" for="name">
+        Name: 
+        <span class="text-red-400" data-text="$register._errors.name"></span>
+      </label>
+      <input name="name" autocapitalize="on" autocomplete="off"
+        data-bind:register.name
+        data-on:input__debounce.500ms="
+          $register.touched.name = true;
+          @get('/api/register/validate', {filterSignals: {include: '/register\..*/'}});
+        "
+        class="
+          p-2 border border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200
+          focus:ring-4
+        "
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-gray-800" for="email">
+        Email Address:
+        <span class="text-red-400" data-text="$register._errors.email"></span>
+      </label>
+      <input name="email" type="email" autocomplete="off"
+        data-bind:register.email
+        data-on:input__debounce.500ms="
+          $register.touched.email = true;
+          @get('/api/register/validate', {filterSignals: {include: '/register\..*/'}});
+        "
+        class="
+          p-2 border border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200
+          focus:ring-4
+        "
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-gray-800" for="password">
+        Password:
+        <span class="text-red-400" data-text="$register._errors.password"></span>
+      </label>
+      <input name="password" type="password"
+        data-bind:register.password
+        data-on:input__debounce.500ms="
+          $register.touched.password = true;
+          @get('/api/register/validate', {filterSignals: {include: '/register\..*/'}});
+        "
+        class="
+          p-2 border border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200
+          focus:ring-4
+        "
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-gray-800" for="address">Address:</label>
+      <textarea name="address" rows="3" autocomplete="off" 
+        data-bind:register.address
+        class="
+          p-2 border border-gray-400/50 rounded-md focus:outline-none 
+          focus:ring-blue-200 focus:ring-4
+        "
+      ></textarea>
+    </div>
+
+    <!-- Form level validation result -->
+    <span 
+      data-show="$register._formMessage !== ''"
+      data-text="$register._formMessage"
+      data-class="{ [$register._formMessageStyle]: true }"
+    ></span>
+
+    <div class="flex text-gray-50 gap-2">
+      <button type="button"
+        data-signals:register._disabled="true"
+        data-attr:disabled="$register._disabled"
+        data-on:click="
+          @post('/api/register', {payload: {
+              name: $register.name,
+              email: $register.email,
+              password: $register.password,
+              address: $register.address
+            }})
+        "
+        class="
+          bg-blue-600/80 rounded-md p-2 hover:bg-blue-600 cursor-pointer
+          disabled:bg-blue-600/50 disabled:cursor-not-allowed
+        " 
+      >Register</button>
+      <a class="bg-zinc-800 rounded-md p-2 hover:bg-zinc-700 cursor-pointer"
+        href="/login">Already registered? Sign in</a>
+    </div>
+  </form>
+</main>
+{{end}}

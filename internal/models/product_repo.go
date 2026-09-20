@@ -187,9 +187,5 @@ func (s *Store) initProductsTable(ctx context.Context) error {
 	`
 
 	_, err := s.db.ExecContext(ctx, query)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }

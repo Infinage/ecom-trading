@@ -45,8 +45,8 @@ func (st *Store) CreateOrder(ctx context.Context, cart []CartItem) error {
 			return fmt.Errorf("product #%d is out of stock", item.ProductID)
 		}
 
-		// Log details to cart_item table
-		insertCartItem := `INSERT INTO cart_item (userid, productid, quantity) VALUES(?, ?, ?)`
+		// Log details to cart_items table
+		insertCartItem := `INSERT INTO cart_items (userid, productid, quantity) VALUES(?, ?, ?)`
 		_, err = tx.ExecContext(ctx, insertCartItem, item.UserID, item.ProductID, item.Quantity)
 		if err != nil {
 			return fmt.Errorf("persisting cart item fail: %w", err)
@@ -58,7 +58,7 @@ func (st *Store) CreateOrder(ctx context.Context, cart []CartItem) error {
 
 func (st *Store) initCartItemTable(ctx context.Context) error {
 	query := `
-		CREATE TABLE IF NOT EXISTS cart_item (
+		CREATE TABLE IF NOT EXISTS cart_items (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			userid INTEGER NOT NULL REFERENCES users(id),
 			productid INTEGER NOT NULL REFERENCES products(id),

@@ -6,7 +6,20 @@
   <link rel="stylesheet" href="/assets/css/index.css">
   <script src="/assets/js/datastar.js" type="module" defer></script>
 </head>
-<body class="flex flex-col h-screen">
+<body class="flex flex-col h-screen"
+  {{if .Meta}}
+  data-signals="{
+    user: {
+      name: '{{.Meta.Name}}', 
+      id: {{.Meta.ID}}, 
+      offering: {{.Meta.Offering}}, 
+      cart: {{.Meta.Cart}},
+    }
+  }"
+  {{else}}
+    data-signals="{user: {name: '', id: 0, offering: 0, cart: 0}}"
+  {{end}}
+>
   {{template "Header" .}}
   {{.Content}}
   {{template "Footer" .}}

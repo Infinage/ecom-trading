@@ -1,6 +1,6 @@
 {{define "Product"}}
 <div 
-  data-show="['', '{{.Category}}'].includes($filters.category)"
+  data-show="['', '{{.Category}}'].includes($filters.category) && $user.id != {{.SellerID}}"
   class="flex flex-col p-4 border-gray-400/50 border rounded-sm"
 >
   <img class="h-[250px]" src="{{.Image}}"/>

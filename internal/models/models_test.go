@@ -111,7 +111,7 @@ func Test_NewCartItem(t *testing.T) {
 	}
 }
 
-func Test_validatePassword(t *testing.T) {
+func Test_ValidatePassword(t *testing.T) {
 	const (
 		lenFail   = "password length must be between 6 and 16"
 		alnumFail = "password must contain at least one letter, number and special character"
@@ -128,7 +128,7 @@ func Test_validatePassword(t *testing.T) {
 		{input: "@!#$@#$!!", errMsg: alnumFail},
 	} {
 		t.Run(tt.input, func(t *testing.T) {
-			checkErrMsg(t, validatePassword(tt.input), tt.errMsg)
+			checkErrMsg(t, ValidatePassword(tt.input), tt.errMsg)
 		})
 	}
 }
