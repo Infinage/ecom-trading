@@ -55,7 +55,7 @@ func (ss *SessionStore) NewSession(uid int64) Session {
 	return sess
 }
 
-// Delete deletes a session via a token based lookup, 
+// Delete deletes a session via a token based lookup,
 // no-op if token is not found.
 func (ss *SessionStore) Delete(token string) {
 	ss.mu.Lock()
@@ -67,10 +67,10 @@ func (ss *SessionStore) Delete(token string) {
 	}
 }
 
-// Get looks up session store by token and returns session 
+// Get looks up session store by token and returns session
 // only if it is still not expired.
 func (ss *SessionStore) Get(token string) (Session, bool) {
-	ss.mu.RLock()	
+	ss.mu.RLock()
 	defer ss.mu.RUnlock()
 
 	sess, ok := ss.tokens[token]
@@ -78,5 +78,5 @@ func (ss *SessionStore) Get(token string) (Session, bool) {
 		return Session{}, false
 	}
 
-	return sess, ok
+	return sess, true
 }

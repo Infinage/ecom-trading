@@ -187,4 +187,5 @@ func (app *App) handleAPILogout(w http.ResponseWriter, r *http.Request) {
 
 	sse := datastar.NewSSE(w, r)
 	sse.PatchSignals([]byte("{user: {name: '', id: 0, offering: 0, cart: 0}}"))
+	sse.ExecuteScript("window.location = '/login'")
 }

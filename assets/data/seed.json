@@ -12,6 +12,12 @@
             "email": "amazon-global@deesa.com",
             "password": "amazon@123",
             "address": "410 Terry Ave N, Seattle 98109, WA"
+        },
+        {
+            "name": "Test",
+            "email": "test@deesa.com",
+            "password": "test@123",
+            "address": "No: 13/A, Disney Street, Wonderland"
         }
     ],
 

@@ -13,7 +13,7 @@ type Store struct {
 }
 
 func NewStore(dbpath string) (*Store, error) {
-	db, err := sql.Open("sqlite", dbpath)
+	db, err := sql.Open("sqlite", dbpath+"?_fk=1")
 	if err != nil {
 		return nil, fmt.Errorf("failed to load db: %w", err)
 	}

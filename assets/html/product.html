@@ -21,6 +21,9 @@
 
       <div class="flex gap-2 mt-auto mb-8">
         <button 
+          data-on:click="
+            @post('/api/cart/update', {payload: {pid: {{.Product.ID}}, action: 'add'}})
+          "
           data-attr="{
             disabled: '{{.Product.SellerID}}' == $user.id,
             title: '{{.Product.SellerID}}' == $user.id? 'You are selling this': 'Add item to cart',

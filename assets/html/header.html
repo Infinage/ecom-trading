@@ -19,14 +19,13 @@
       <span>Login</span>
     </a>
 
-    <!-- MY PRODUCTS -->
-    <a class="flex cursor-pointer items-center gap-2" data-show="$user.id != 0" 
-      data-attr:href="'/user/' + $user.id" 
-    >
-      <svg fill="currentColor" class="h-5 w-5 pb-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
-        <path d="M405.3 192 320 0h-42.7l85.3 192zM234.7 0H192l-85.3 192h42.7zm-192 469.3c0 23.5 19.1 42.7 42.7 42.7h341.3c23.5 0 42.7-19.1 42.7-42.7l21.3-192H21.3zm320-149.3h42.7L384 469.3h-42.7zm-128 0h42.7v149.3h-42.7zm-85.4 0 21.3 149.3H128L106.7 320zm341.4-106.7H21.3C9.5 213.3 0 222.9 0 234.7V256h512v-21.3c0-11.8-9.5-21.4-21.3-21.4"/>
+    <!-- Register -->
+    <a class="flex items-center gap-1 cursor-pointer" href="/register" data-show="$user.id == 0">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 21v-4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4m3-13v6m-3-3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span>My Products <span data-text="'(' + $user.offering + ')'"></span></span>
+      <span>Register</span>
     </a>
 
     <!-- LOGOUT -->
@@ -41,8 +40,18 @@
       <span data-text="$user.name"></span>
     </button>
 
+    <!-- MY PRODUCTS -->
+    <a class="flex cursor-pointer items-center gap-2" data-show="$user.id != 0" 
+      data-attr:href="'/user/' + $user.id" 
+    >
+      <svg fill="currentColor" class="h-5 w-5 pb-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
+        <path d="M405.3 192 320 0h-42.7l85.3 192zM234.7 0H192l-85.3 192h42.7zm-192 469.3c0 23.5 19.1 42.7 42.7 42.7h341.3c23.5 0 42.7-19.1 42.7-42.7l21.3-192H21.3zm320-149.3h42.7L384 469.3h-42.7zm-128 0h42.7v149.3h-42.7zm-85.4 0 21.3 149.3H128L106.7 320zm341.4-106.7H21.3C9.5 213.3 0 222.9 0 234.7V256h512v-21.3c0-11.8-9.5-21.4-21.3-21.4"/>
+      </svg>
+      <span>My Products <span data-text="'(' + $user.offering + ')'"></span></span>
+    </a>
+
     <!-- CART -->
-    <a href="/cart" class="flex items-center gap-2 cursor-pointer">
+    <a href="/cart" class="flex items-center gap-2 cursor-pointer" data-show="$user.id != 0">
       <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" 
         enable-background="new 0 0 52 52" xml:space="preserve" class="h-5 w-5">
       <g>
@@ -54,6 +63,7 @@
       <span>Cart <span data-text="'(' + $user.cart + ')'"></span>
       </span>
     </a>
+
   </div>
 </header> 
 {{end}}

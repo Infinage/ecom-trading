@@ -18,6 +18,12 @@ type App struct {
 	sst    *models.SessionStore
 }
 
+// ContextKey is used to strongly type 'UserIDKey'
+type contextKey string
+
+// userIDKey stores user id on authenticated requests into context.
+const userIDKey contextKey = "UserID"
+
 // NewApp intializes the ecom-trading app, setting up DB, seeding it
 // when requested, initializing the templates, etc.
 func NewApp(dbpath string, assets embed.FS, seedDB bool) (*App, error) {
@@ -45,6 +51,24 @@ func NewApp(dbpath string, assets embed.FS, seedDB bool) (*App, error) {
 
 // Routes configures a set of routes for the http server to use.
 func (app *App) Routes() *http.ServeMux {
+	authMiddleware := func(next http.HandlerFunc) http.HandlerFunc {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			token := ""
+			if cookie, err := r.Cookie("session_token"); err == nil {
+				token = cookie.Value
+			}
+
+			sess, ok := app.sst.Get(token)
+			if !ok {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), userIDKey, sess.UserId)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /{$}", app.handlerHomePage(true))
@@ -62,6 +86,11 @@ func (app *App) Routes() *http.ServeMux {
 	mux.HandleFunc("POST /api/login", app.handleAPILogin)
 	mux.HandleFunc("POST /api/logout", app.handleAPILogout)
 
+	mux.HandleFunc("GET /cart", authMiddleware(app.handleCartPage))
+	mux.HandleFunc("POST /api/cart/update", authMiddleware(app.handleAPIUpdateCart))
+	mux.HandleFunc("POST /api/cart/checkout", authMiddleware(app.handleAPICheckout))
+	mux.HandleFunc("POST /shipping", authMiddleware(app.handleShippingPage))
+
 	return mux
 }
 
@@ -73,7 +102,7 @@ func (app *App) render(fragment string, w http.ResponseWriter, r *http.Request) 
 	cookie, err := r.Cookie("session_token")
 	if err == nil {
 		if sess, ok := app.sst.Get(cookie.Value); ok {
-			meta, err := app.st.GetUserMetaByID(r.Context(), sess.UserId)		
+			meta, err := app.st.GetUserMetaByID(r.Context(), sess.UserId)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return

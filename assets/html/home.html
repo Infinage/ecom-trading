@@ -11,6 +11,9 @@
   <div class="flex justify-between mx-4 mt-auto">
     <button class="py-1 px-2 border rounded-md w-12 flex justify-center 
       items-center cursor-pointer hover:bg-zinc-800 hover:text-white"
+      data-on:click="
+        @post('/api/cart/update', {payload: {pid: {{.ID}}, action: 'add'}})
+      "
     >
       <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" 
         enable-background="new 0 0 52 52" xml:space="preserve" class="h-5 w-5">
@@ -26,7 +29,8 @@
 
     <a 
       href="/product/{{.ID}}"
-      class="py-1 px-2 border rounded-md cursor-pointer hover:bg-zinc-800 hover:text-white" 
+      class="py-1 px-2 border rounded-md cursor-pointer hover:bg-zinc-800 
+        hover:text-white" 
     >Details</a>
   </div>
 </div>

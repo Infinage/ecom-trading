@@ -5,7 +5,6 @@ import (
 )
 
 type CartItem struct {
-	ID        int64
 	UserID    int64
 	ProductID int64
 	Quantity  uint

@@ -6,15 +6,15 @@ import (
 )
 
 type UserMeta struct {
-	ID int64
-	Name string
+	ID       int64
+	Name     string
 	Offering int
-	Cart int
+	Cart     int
 }
 
-// GetUserMetaByID queries DB with user id and returns meta containing details 
+// GetUserMetaByID queries DB with user id and returns meta containing details
 // as username, count of listed products, count of cart items, etc.
-func (s *Store) GetUserMetaByID(ctx context.Context, uid int64) (*UserMeta, error){
+func (s *Store) GetUserMetaByID(ctx context.Context, uid int64) (*UserMeta, error) {
 	u, err := s.GetUserByID(ctx, uid)
 	if err != nil {
 		return nil, fmt.Errorf("user #%d not found: %v", uid, err)
