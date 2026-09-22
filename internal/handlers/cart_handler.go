@@ -3,9 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/infinage/ecom-trading/internal/models"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -30,7 +33,7 @@ func (app *App) handleCartPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var buffer strings.Builder
-	templData := map[string]any { "Cart": cart, "StockOk": stockOk }
+	templData := map[string]any{"Cart": cart, "StockOk": stockOk}
 	if err := app.templ.ExecuteTemplate(&buffer, "Cart", templData); err != nil {
 		errMsg := fmt.Sprintf("Failed to execute template: %v", err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
@@ -92,7 +95,7 @@ func (app *App) handleAPIUpdateCart(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, errMsg, http.StatusInternalServerError)
 			return
 		}
-		
+
 		// If any qty exceeds stock count, disable checkout button
 		var stockOk bool = true
 		for _, item := range cart {
@@ -101,7 +104,7 @@ func (app *App) handleAPIUpdateCart(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		templData := map[string]any { "Cart": cart, "StockOk": stockOk }
+		templData := map[string]any{"Cart": cart, "StockOk": stockOk}
 		if err = app.templ.ExecuteTemplate(&buffer, "Cart", templData); err != nil {
 			errMsg := fmt.Sprintf("Failed to execute template: %v", err)
 			http.Error(w, errMsg, http.StatusInternalServerError)
@@ -115,13 +118,54 @@ func (app *App) handleAPIUpdateCart(w http.ResponseWriter, r *http.Request) {
 	sse.PatchElements(buffer.String())
 }
 
+// handleShippingPage returns a static page to gather some dummy details from user.
+func (app *App) handleShippingPage(w http.ResponseWriter, r *http.Request) {
+	uid, _ := r.Context().Value(userIDKey).(int64)
+	user, err := app.st.GetUserByID(r.Context(), uid)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]any{"User": user, "MinExpiry": time.Now().Format("2006-01")}
+
+	var buffer strings.Builder
+	if err = app.templ.ExecuteTemplate(&buffer, "Shipping", data); err != nil {
+		errMsg := fmt.Sprintf("Failed to render template: %v", err)
+		http.Error(w, errMsg, http.StatusInternalServerError)
+		return
+	}
+
+	app.render(buffer.String(), w, r)
+}
+
 // handleAPICheckout flushes user's cart and updates the seller's inventory.
 func (app *App) handleAPICheckout(w http.ResponseWriter, r *http.Request) {
 	uid, _ := r.Context().Value(userIDKey).(int64)
-	_ = app.st.CreateOrder(r.Context(), uid)
-}
+	cartItems, err := app.st.CreateOrder(r.Context(), uid);
+	if err != nil {
+		sse := datastar.NewSSE(w, r)
+		signals := fmt.Sprintf("{_shipping: {errors: %q}}", err)
+		sse.PatchSignals([]byte(signals))
+		return
+	}
 
-// handleShippingPage returns a static page to gather some dummy details from user.
-func (app *App) handleShippingPage(w http.ResponseWriter, r *http.Request) {
+	// Summary needs total price details
+	var total models.ProductWithQuantity
+	total.Title, total.Quantity = "Total", 1
+	for _, item := range cartItems {
+		total.Total += item.Total	
+	}
+	total.Total = float32(math.Round(float64(total.Total * 100))) / 100
+	cartItems = append(cartItems, total)
 
+	var buffer strings.Builder
+	if err = app.templ.ExecuteTemplate(&buffer, "OrderSummary", cartItems); err != nil {
+		sse := datastar.NewSSE(w, r)
+		signals := fmt.Sprintf("{_shipping: {errors: %q}}", err)
+		sse.PatchSignals([]byte(signals))
+		return
+	}
+
+	app.render(buffer.String(), w, r)
 }

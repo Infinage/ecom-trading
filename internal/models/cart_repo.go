@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"math"
 )
@@ -12,8 +13,13 @@ type ProductWithQuantity struct {
 	Total    float32
 }
 
-// GetCart returns a list of cart_items for a particular user.
-func (st *Store) GetCart(ctx context.Context, uid int64) ([]ProductWithQuantity, error) {
+type querier interface {
+	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
+}
+
+func (st *Store) getCart(ctx context.Context, db querier, uid int64) (
+	[]ProductWithQuantity, error) {
+
 	query := `
 		SELECT 
 			p.id, 
@@ -30,7 +36,7 @@ func (st *Store) GetCart(ctx context.Context, uid int64) ([]ProductWithQuantity,
 		WHERE c.userid = ?
 	`
 
-	rows, err := st.db.QueryContext(ctx, query, uid)
+	rows, err := db.QueryContext(ctx, query, uid)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read user cart: %v", err)
 	}
@@ -60,6 +66,11 @@ func (st *Store) GetCart(ctx context.Context, uid int64) ([]ProductWithQuantity,
 	}
 
 	return products, nil
+}
+
+// GetCart returns a list of cart_items for a particular user.
+func (st *Store) GetCart(ctx context.Context, uid int64) ([]ProductWithQuantity, error) {
+	return st.getCart(ctx, st.db, uid)
 }
 
 // AddToCart adds one unit of given product to user's cart and returns CartItem
@@ -104,10 +115,10 @@ func (st *Store) RemoveFromCart(ctx context.Context, uid, pid int64) (*CartItem,
 
 // CreateOrder books all active items on user's cart and updates
 // quantity as listed on the seller side.
-func (st *Store) CreateOrder(ctx context.Context, uid int64) error {
+func (st *Store) CreateOrder(ctx context.Context, uid int64) ([]ProductWithQuantity, error) {
 	tx, err := st.db.BeginTx(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("failed to create txn: %v", err)
+		return nil, fmt.Errorf("failed to create txn: %v", err)
 	}
 
 	// On success we commit so this becomes a noop then
@@ -117,7 +128,7 @@ func (st *Store) CreateOrder(ctx context.Context, uid int64) error {
 	var cart []CartItem
 	rows, err := tx.QueryContext(ctx, `SELECT * FROM cart_items WHERE userid = ?`, uid)
 	if err != nil {
-		return fmt.Errorf("failed to fetch cart: %v", err)
+		return nil, fmt.Errorf("failed to fetch cart: %v", err)
 	}
 	defer rows.Close()
 
@@ -125,13 +136,13 @@ func (st *Store) CreateOrder(ctx context.Context, uid int64) error {
 		var item CartItem
 		err = rows.Scan(&item.UserID, &item.ProductID, &item.Quantity)
 		if err != nil {
-			return fmt.Errorf("failed to fetch cart item: %v", err)
+			return nil, fmt.Errorf("failed to fetch cart item: %v", err)
 		}
 		cart = append(cart, item)
 	}
 
 	if len(cart) == 0 {
-		return fmt.Errorf("cart is empty")
+		return nil, fmt.Errorf("cart is empty")
 	}
 
 	// Update the product quantity based on the order
@@ -141,26 +152,33 @@ func (st *Store) CreateOrder(ctx context.Context, uid int64) error {
 			SET stockcount = stockcount - ?
 			WHERE id = ? AND stockcount >= ?
 		`
-		res, err := tx.ExecContext(ctx, updateQuery, item.Quantity, item.ProductID)
+		res, err := tx.ExecContext(ctx, updateQuery, item.Quantity,
+			item.ProductID, item.Quantity)
 		if err != nil {
-			return fmt.Errorf("update stock count fail: %w", err)
+			return nil, fmt.Errorf("update stock count fail: %w", err)
 		}
 
 		updateCount, err := res.RowsAffected()
 		if err != nil {
-			return err
+			return nil, err
 		} else if updateCount == 0 {
-			return fmt.Errorf("product #%d is out of stock", item.ProductID)
+			return nil, fmt.Errorf("product #%d is out of stock", item.ProductID)
 		}
 	}
 
-	// Delete the cart items for the user
-	_, err = st.db.ExecContext(ctx, `DELETE FROM cart_items WHERE userid = ?`, uid)
+	// Get products with total cost for display
+	cartItems, err := st.getCart(ctx, tx, uid)
 	if err != nil {
-		return fmt.Errorf("failed to clear cart: %v", err)
+		return nil, fmt.Errorf("failed to fetch cart: %v", err)
 	}
 
-	return tx.Commit()
+	// Delete the cart items for the user
+	_, err = tx.ExecContext(ctx, `DELETE FROM cart_items WHERE userid = ?`, uid)
+	if err != nil {
+		return nil, fmt.Errorf("failed to clear cart: %v", err)
+	}
+
+	return cartItems, tx.Commit()
 }
 
 func (st *Store) initCartItemTable(ctx context.Context) error {

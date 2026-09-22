@@ -24,8 +24,11 @@ func (app *App) handleRegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) handleLoginPage(w http.ResponseWriter, r *http.Request) {
+	// If a different page redirected to login, this would be set
+	data := map[string]string{"Next": r.URL.Query().Get("next")}
+
 	var buffer strings.Builder
-	if err := app.templ.ExecuteTemplate(&buffer, "Login", nil); err != nil {
+	if err := app.templ.ExecuteTemplate(&buffer, "Login", data); err != nil {
 		errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
 		return
@@ -167,8 +170,14 @@ func (app *App) handleAPILogin(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 	})
 
+	redirectURL := "/"
+	if next := r.FormValue("next"); strings.HasPrefix(next, "/") &&
+		!strings.HasPrefix(next, "//") {
+		redirectURL = next
+	}
+
 	sse := datastar.NewSSE(w, r)
-	_ = sse.ExecuteScript("window.location.href = '/'")
+	_ = sse.ExecuteScript(fmt.Sprintf("window.location.href = '%s'", redirectURL))
 }
 
 func (app *App) handleAPILogout(w http.ResponseWriter, r *http.Request) {

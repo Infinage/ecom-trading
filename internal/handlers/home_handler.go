@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/infinage/ecom-trading/internal/models"
@@ -60,7 +61,17 @@ func (app *App) Routes() *http.ServeMux {
 
 			sess, ok := app.sst.Get(token)
 			if !ok {
-				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				targetPath := r.URL.RequestURI()
+				if strings.HasPrefix(r.URL.Path, "/api") || r.Method != "GET" {
+					if referer := r.Referer(); referer != "" {
+						if u, err := url.ParseRequestURI(referer); err == nil {
+							targetPath = u.RequestURI()
+						}
+					}
+				}
+
+				target := url.QueryEscape(targetPath)
+				http.Redirect(w, r, "/login?next="+target, http.StatusSeeOther)
 				return
 			}
 
@@ -89,7 +100,7 @@ func (app *App) Routes() *http.ServeMux {
 	mux.HandleFunc("GET /cart", authMiddleware(app.handleCartPage))
 	mux.HandleFunc("POST /api/cart/update", authMiddleware(app.handleAPIUpdateCart))
 	mux.HandleFunc("POST /api/cart/checkout", authMiddleware(app.handleAPICheckout))
-	mux.HandleFunc("POST /shipping", authMiddleware(app.handleShippingPage))
+	mux.HandleFunc("GET /shipping", authMiddleware(app.handleShippingPage))
 
 	return mux
 }

@@ -1,0 +1,134 @@
+{{define "Shipping"}}
+<main 
+  class="flex flex-col flex-1" id="main"
+  data-signals="{_shipping: {selected: 'address'}}"
+>
+  <div class="flex flex-col mx-16 my-2">
+    <div class="flex gap-2 items-center">
+      <button 
+        class="p-4 hover:bg-gray-300 font-bold cursor-pointer flex 
+          items-center gap-2"
+        data-on:click="$_shipping.selected = 'address'"
+        data-class="{
+          'text-blue-500': $_shipping.selected === 'address',
+          'text-gray-500': $_shipping.selected !== 'address'
+        }"
+      >
+        <span class="rounded-full h-8 w-8 text-white flex justify-center items-center" 
+          data-class="{
+            'bg-blue-500': $_shipping.selected === 'address',
+            'bg-gray-500': $_shipping.selected !== 'address'
+          }
+        ">1</span>
+        Address
+      </button>
+
+      <hr class="flex-1 border-t-1 border-gray-300" />
+
+      <button 
+        class="p-4 hover:bg-gray-300 font-bold cursor-pointer flex 
+          items-center gap-2"
+        data-on:click="$_shipping.form.elements.next.click()"
+        data-class="{
+          'text-blue-500': $_shipping.selected === 'payment',
+          'text-gray-500': $_shipping.selected !== 'payment'
+        }"
+      >
+        <span class="rounded-full h-8 w-8 text-white flex justify-center items-center" 
+          data-class="{
+            'bg-blue-500': $_shipping.selected === 'payment',
+            'bg-gray-500': $_shipping.selected !== 'payment'
+          }
+        ">2</span>
+        Payment
+      </button>
+    </div>
+
+    <form class="m-4" data-ref="_shipping.form"
+      data-on:submit="@post('/api/cart/checkout', {payload: {}})"
+    >
+      <div class="gap-4 flex flex-col justify-left"
+        data-show="$_shipping.selected === 'address'" 
+      >
+        <div class="flex flex-col">
+          <label class="text-gray-800" for="address">Address</label>
+          <input required name="address" placeholder="Enter Address" 
+            autocomplete="off" value="{{.User.Address}}" class="p-2 border 
+              border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200 
+              focus:ring-4"
+          />
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-gray-800" for="phone">Phone</label>
+          <input required name="phone" type="tel" placeholder="Enter Phone Number" 
+            autocomplete="off" pattern="[6-9][0-9]{9}" class="p-2 border 
+              border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200 
+              focus:ring-4"
+          />
+        </div>
+
+        <button type="button" name="next"
+          class="p-2 cursor-pointer rounded-md bg-blue-500 text-white 
+            hover:bg-blue-600 w-16 mt-4" 
+          data-on:click="
+            if (!$_shipping.form.elements.address.checkValidity()) {
+              $_shipping.form.elements.address.reportValidity();
+            } else if (!$_shipping.form.elements.phone.checkValidity()) {
+              $_shipping.form.elements.phone.reportValidity();
+            } else {
+              $_shipping.selected = 'payment';
+            }
+          "
+        >Next</button>
+      </div>
+
+      <div class="gap-4 flex flex-col justify-left"
+        data-show="$_shipping.selected === 'payment'" 
+      >
+        <div class="flex flex-col">
+          <label class="text-gray-800" for="name">Name on card</label>
+          <input required name="name" placeholder="Enter your Name" 
+            value="{{.User.Name}}" class="p-2 border border-gray-400/50 rounded-md 
+              focus:outline-none focus:ring-blue-200 focus:ring-4"
+          />
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-gray-800" for="cardNo">Credit Card number</label>
+          <input required name="cardNo" placeholder="Enter your Credit Card Number"
+            inputmode="numeric" autocomplete="cc-number" pattern="[0-9]{14,19}"
+            class="p-2 border border-gray-400/50 rounded-md focus:outline-none 
+              focus:ring-blue-200 focus:ring-4"
+          />
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-gray-800" for="expiry">Card Expiry</label>
+          <input required name="expiry" autocomplete="cc-exp" type="month" 
+            min="{{.MinExpiry}}" class="p-2 border border-gray-400/50 rounded-md 
+            focus:outline-none focus:ring-blue-200 focus:ring-4"/>
+        </div>
+
+        <div class="flex flex-col mb-4">
+          <label class="text-gray-800" for="cvv">CVV</label>
+          <input required name="cvv" placeholder="XXX" inputmode="numeric" 
+            autocomplete="cc-csc" pattern="[0-9]{3,4}" class="p-2 border 
+              border-gray-400/50 rounded-md focus:outline-none focus:ring-blue-200 
+              focus:ring-4"
+          />
+        </div>
+
+        <!-- Display any errors with checkout -->
+        <span class="text-red-600" data-show="$_shipping.errors !== ''" 
+          data-text="$_shipping.errors"></span>
+
+        <button
+          class="p-2 cursor-pointer rounded-md bg-blue-500 text-white 
+          hover:bg-blue-600 w-32" 
+        >Place Order</button>
+      </div>
+    </form>
+  </div>
+</main>
+{{end}}
