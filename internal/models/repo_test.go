@@ -13,7 +13,7 @@ func Test_RepoInit(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	products, err := st.GetAllProducts(ctx)
+	products, err := st.GetAllValidProducts(ctx)
 	if err == nil {
 		t.Error("Expected error but got nil")
 	} else if len(products) != 0 {
@@ -28,7 +28,7 @@ func Test_RepoInit(t *testing.T) {
 		t.Errorf("Unexpected error during table re-init: %v", err)
 	}
 
-	if products, err = st.GetAllProducts(ctx); err != nil {
+	if products, err = st.GetAllValidProducts(ctx); err != nil {
 		t.Errorf("GetAllProducts after init returned error: %v", err)
 	} else if len(products) != 0 {
 		t.Errorf("Expected to return 0 products from store post init, got: %v", products)

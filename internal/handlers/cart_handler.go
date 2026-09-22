@@ -32,15 +32,8 @@ func (app *App) handleCartPage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var buffer strings.Builder
 	templData := map[string]any{"Cart": cart, "StockOk": stockOk}
-	if err := app.templ.ExecuteTemplate(&buffer, "Cart", templData); err != nil {
-		errMsg := fmt.Sprintf("Failed to execute template: %v", err)
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-
-	app.render(buffer.String(), w, r)
+	app.render("Cart", templData, w, r)
 }
 
 // handleAPIUpdateCart is used to add / remove an item from user's cart.
@@ -128,21 +121,13 @@ func (app *App) handleShippingPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := map[string]any{"User": user, "MinExpiry": time.Now().Format("2006-01")}
-
-	var buffer strings.Builder
-	if err = app.templ.ExecuteTemplate(&buffer, "Shipping", data); err != nil {
-		errMsg := fmt.Sprintf("Failed to render template: %v", err)
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-
-	app.render(buffer.String(), w, r)
+	app.render("Shipping", data, w, r)
 }
 
 // handleAPICheckout flushes user's cart and updates the seller's inventory.
 func (app *App) handleAPICheckout(w http.ResponseWriter, r *http.Request) {
 	uid, _ := r.Context().Value(userIDKey).(int64)
-	cartItems, err := app.st.CreateOrder(r.Context(), uid);
+	cartItems, err := app.st.CreateOrder(r.Context(), uid)
 	if err != nil {
 		sse := datastar.NewSSE(w, r)
 		signals := fmt.Sprintf("{_shipping: {errors: %q}}", err)
@@ -152,20 +137,13 @@ func (app *App) handleAPICheckout(w http.ResponseWriter, r *http.Request) {
 
 	// Summary needs total price details
 	var total models.ProductWithQuantity
-	total.Title, total.Quantity = "Total", 1
+	total.Title, total.Quantity = "Total", 0
 	for _, item := range cartItems {
-		total.Total += item.Total	
+		total.Total += item.Total
+		total.Quantity += item.Quantity
 	}
-	total.Total = float32(math.Round(float64(total.Total * 100))) / 100
+	total.Total = float32(math.Round(float64(total.Total*100))) / 100
+
 	cartItems = append(cartItems, total)
-
-	var buffer strings.Builder
-	if err = app.templ.ExecuteTemplate(&buffer, "OrderSummary", cartItems); err != nil {
-		sse := datastar.NewSSE(w, r)
-		signals := fmt.Sprintf("{_shipping: {errors: %q}}", err)
-		sse.PatchSignals([]byte(signals))
-		return
-	}
-
-	app.render(buffer.String(), w, r)
+	app.render("OrderSummary", cartItems, w, r)
 }

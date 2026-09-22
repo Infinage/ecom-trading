@@ -37,11 +37,11 @@ func (s *Store) getProducts(ctx context.Context, query string,
 	return products, nil
 }
 
-// GetAllProducts fetches all products found in DB.
-func (s *Store) GetAllProducts(ctx context.Context) ([]Product, error) {
+// GetAllValidProducts fetches all products found in DB that are in stock.
+func (s *Store) GetAllValidProducts(ctx context.Context) ([]Product, error) {
 	query := `
 		SELECT id, title, description, price, category, image, stockcount, seller 
-		FROM products
+		FROM products WHERE stockcount > 0
 	`
 	return s.getProducts(ctx, query)
 }

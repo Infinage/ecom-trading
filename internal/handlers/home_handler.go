@@ -87,6 +87,12 @@ func (app *App) Routes() *http.ServeMux {
 
 	mux.HandleFunc("GET /products/", app.handlerHomePage(false))
 	mux.HandleFunc("GET /product/{id}/", app.handleProductPage)
+
+	mux.HandleFunc("GET /merchant/{id}/", app.handleMerchantPage)
+	mux.HandleFunc("POST /api/product", authMiddleware(app.handleAPIEditProduct))
+	mux.HandleFunc("PUT /api/product", authMiddleware(app.handleAPIUpdateProduct))
+	mux.HandleFunc("DELETE /api/product/{id}", authMiddleware(app.handleAPIDeleteProduct))
+
 	mux.HandleFunc("GET /contact/", app.handleContactPage)
 
 	mux.HandleFunc("GET /register/", app.handleRegisterPage)
@@ -105,9 +111,21 @@ func (app *App) Routes() *http.ServeMux {
 	return mux
 }
 
-func (app *App) render(fragment string, w http.ResponseWriter, r *http.Request) {
-	// Embed the content into base layout
-	data := map[string]any{"Content": template.HTML(fragment)}
+// render builds an inner template with given data to a temporary buffer. It later
+// writes this data into our 'index.html' base layout. If logged in, header is populated
+// with user meta such as name, offerings, cart.
+func (app *App) render(templName string, templData any, w http.ResponseWriter, r *http.Request) {
+	// Build the inner template into a buffer
+	var buffer strings.Builder
+	err := app.templ.ExecuteTemplate(&buffer, templName, templData)
+	if err != nil {
+		errMsg := fmt.Sprintf("Failed to build %s: %v", templName, err)
+		http.Error(w, errMsg, http.StatusInternalServerError)
+		return
+	}
+
+	// Embed the inner content into base layout
+	rootData := map[string]any{"Content": template.HTML(buffer.String())}
 
 	// Extract cookie to populate the header details
 	cookie, err := r.Cookie("session_token")
@@ -120,11 +138,11 @@ func (app *App) render(fragment string, w http.ResponseWriter, r *http.Request) 
 			}
 
 			// Embed meta to be parsed by templates
-			data["Meta"] = meta
+			rootData["Meta"] = meta
 		}
 	}
 
-	err = app.templ.ExecuteTemplate(w, "index.html", data)
+	err = app.templ.ExecuteTemplate(w, "index.html", rootData)
 	if err != nil {
 		errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
 		http.Error(w, errMsg, http.StatusInternalServerError)
@@ -134,7 +152,7 @@ func (app *App) render(fragment string, w http.ResponseWriter, r *http.Request) 
 
 func (app *App) handlerHomePage(showHero bool) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		products, err := app.st.GetAllProducts(r.Context())
+		products, err := app.st.GetAllValidProducts(r.Context())
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -160,29 +178,11 @@ func (app *App) handlerHomePage(showHero bool) func(w http.ResponseWriter, r *ht
 			"Category":   category,
 		}
 
-		// Build the home template string into buffer
-		var buffer strings.Builder
-		err = app.templ.ExecuteTemplate(&buffer, "Home", data)
-		if err != nil {
-			errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
-			http.Error(w, errMsg, http.StatusInternalServerError)
-			return
-		}
-
-		// Render the fragment
-		app.render(buffer.String(), w, r)
+		// Render the page
+		app.render("Home", data, w, r)
 	}
 }
 
 func (app *App) handleContactPage(w http.ResponseWriter, r *http.Request) {
-	var buffer strings.Builder
-	err := app.templ.ExecuteTemplate(&buffer, "Contact", nil)
-	if err != nil {
-		errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-
-	// Render the fragment
-	app.render(buffer.String(), w, r)
+	app.render("Contact", nil, w, r)
 }

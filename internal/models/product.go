@@ -24,11 +24,11 @@ type Product struct {
 }
 
 // NewProduct performs validations and returns a new Product object
-func NewProduct(title, desc string, price float32, category ProductCategory,
-	imageUrl string, seller int64) (*Product, error) {
+func NewProduct(title, desc string, price float32, stockCount uint,
+	category ProductCategory, imageUrl string, seller int64) (*Product, error) {
 
 	p := Product{Title: title, Description: desc, Price: price,
-		Category: category, Image: imageUrl, StockCount: 1,
+		Category: category, Image: imageUrl, StockCount: stockCount,
 		SellerID: seller}
 
 	if err := p.Validate(); err != nil {

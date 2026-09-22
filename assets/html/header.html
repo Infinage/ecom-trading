@@ -1,6 +1,6 @@
 {{define "Header"}}
 <header class="w-full h-16 bg-zinc-800 text-white flex items-center gap-10 px-4 py-8">
-  <h1 class="text-2xl font-bold cursor-pointer">E-Cart Shop</h1>
+  <h1 class="text-2xl font-bold cursor-pointer"><a href="/">E-Cart Shop</a></h1>
   <nav class="flex flex-1">
     <ul class="flex gap-4">
       <a href="/" class="cursor-pointer">Home</a>
@@ -42,7 +42,7 @@
 
     <!-- MY PRODUCTS -->
     <a class="flex cursor-pointer items-center gap-2" data-show="$user.id != 0" 
-      data-attr:href="'/user/' + $user.id" 
+      data-attr:href="'/merchant/' + $user.id" 
     >
       <svg fill="currentColor" class="h-5 w-5 pb-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
         <path d="M405.3 192 320 0h-42.7l85.3 192zM234.7 0H192l-85.3 192h42.7zm-192 469.3c0 23.5 19.1 42.7 42.7 42.7h341.3c23.5 0 42.7-19.1 42.7-42.7l21.3-192H21.3zm320-149.3h42.7L384 469.3h-42.7zm-128 0h42.7v149.3h-42.7zm-85.4 0 21.3 149.3H128L106.7 320zm341.4-106.7H21.3C9.5 213.3 0 222.9 0 234.7V256h512v-21.3c0-11.8-9.5-21.4-21.3-21.4"/>

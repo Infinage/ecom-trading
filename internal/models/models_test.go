@@ -84,7 +84,8 @@ func Test_NewProduct(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := NewProduct(tt.title, tt.desc, tt.price, tt.category, tt.imageUrl, tt.seller)
+			_, err := NewProduct(tt.title, tt.desc, tt.price, 1, tt.category,
+				tt.imageUrl, tt.seller)
 			checkErrMsg(t, err, tt.errMsg)
 		})
 	}

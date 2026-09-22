@@ -11,7 +11,7 @@
       <div class="flex gap-2 font-medium text-gray-600/80 text-2xl uppercase">
         <span>{{.Product.Category}}</span>
         <span>|</span>
-        <span>Merchant#: {{.Product.SellerID}}</span>
+        <a href="/merchant/{{.Product.SellerID}}">Merchant#: {{.Product.SellerID}}</a>
       </div>
 
       <span class="text-5xl font-light [word-spacing:12px]">{{.Product.Title}}</span>
@@ -20,22 +20,22 @@
       <span class="text-gray-800/80 text-xl line-clamp-6">{{.Product.Description}}</span>
 
       <div class="flex gap-2 mt-auto mb-8">
-        <button 
+        <button data-show="'{{.Product.SellerID}}' != $user.id"
+          title="Add item to cart" class="w-32 border border-gray-400 rounded-md 
+            cursor-pointer hover:bg-zinc-800 hover:text-white"
           data-on:click="
             @post('/api/cart/update', {payload: {pid: {{.Product.ID}}, action: 'add'}})
           "
-          data-attr="{
-            disabled: '{{.Product.SellerID}}' == $user.id,
-            title: '{{.Product.SellerID}}' == $user.id? 'You are selling this': 'Add item to cart',
-          }"
-          class="
-            w-32 border border-gray-400 rounded-md cursor-pointer
-            hover:bg-zinc-800 hover:text-white disabled:cursor-not-allowed 
-            disabled:hover:bg-transparent disabled:hover:text-inherit
-          "
         >Add to Cart</button>
-        <button class="w-28 h-10 px-2 py-1 rounded-md bg-zinc-800 text-white 
-          cursor-pointer hover:bg-zinc-800/80">Go to Cart</button>
+        <a href="/cart" data-show="'{{.Product.SellerID}}' != $user.id"
+          class="w-28 h-10 px-2 py-1 rounded-md bg-zinc-800 text-white cursor-pointer 
+            hover:bg-zinc-800/80 flex justify-center items-center"
+        >Go to Cart</a>
+        <button data-show="'{{.Product.SellerID}}' == $user.id"
+          data-on:click="@post('/api/product', {payload: {pid: {{.Product.ID}}}})"
+          class="h-10 p-2 rounded-md bg-zinc-800 text-white 
+            cursor-pointer hover:bg-zinc-800/80"
+        >Modify product</button>
       </div>
     </div>
   </div>

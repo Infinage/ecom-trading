@@ -12,29 +12,13 @@ import (
 )
 
 func (app *App) handleRegisterPage(w http.ResponseWriter, r *http.Request) {
-	var buffer strings.Builder
-	err := app.templ.ExecuteTemplate(&buffer, "Register", nil)
-	if err != nil {
-		errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-
-	app.render(buffer.String(), w, r)
+	app.render("Register", nil, w, r)
 }
 
 func (app *App) handleLoginPage(w http.ResponseWriter, r *http.Request) {
 	// If a different page redirected to login, this would be set
 	data := map[string]string{"Next": r.URL.Query().Get("next")}
-
-	var buffer strings.Builder
-	if err := app.templ.ExecuteTemplate(&buffer, "Login", data); err != nil {
-		errMsg := fmt.Sprintf("Execute template fail: %v\n", err)
-		http.Error(w, errMsg, http.StatusInternalServerError)
-		return
-	}
-
-	app.render(buffer.String(), w, r)
+	app.render("Login", data, w, r)
 }
 
 func (app *App) handleAPIRegisterValidate(w http.ResponseWriter, r *http.Request) {

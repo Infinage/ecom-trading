@@ -20,6 +20,7 @@ type seedJSON struct {
 		ID          int64   `json:"id"`
 		Title       string  `json:"title"`
 		Price       float32 `json:"price"`
+		Qty         uint    `json:"qty"`
 		Description string  `json:"description"`
 		Category    string  `json:"category"`
 		Image       string  `json:"image"`
@@ -58,7 +59,7 @@ func Seed(ctx context.Context, r io.Reader, st *Store) (seedStat, error) {
 	}
 
 	for _, P := range data.Products {
-		p, err := NewProduct(P.Title, P.Description, P.Price,
+		p, err := NewProduct(P.Title, P.Description, P.Price, P.Qty,
 			ProductCategory(P.Category), P.Image, P.Seller)
 
 		if err != nil {
