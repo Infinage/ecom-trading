@@ -1,7 +1,7 @@
 {{define "Footer"}}
 <footer class="bg-zinc-800 w-full flex flex-col text-gray-400">
-  <div class="flex items-center justify-between p-5">
-    <div>Get connected with us on social networks:</div>
+  <div class="flex items-center justify-center sm:justify-between p-5">
+    <div class="hidden sm:block">Get connected with us on social networks:</div>
     <nav class="m-2">
       <ul class="flex gap-5">
         <li>
@@ -27,9 +27,13 @@
 
   <hr class="border-gray-50 border-t" />
 
-  <div class="flex p-4 w-3/4 items-start justify-around self-center gap-8 m-8">
-    <div class="flex flex-1 flex-col gap-4">
-      <h2 class="uppercase font-bold flex gap-2 items-center">
+  <div class="flex flex-col md:flex-row py-8 px-4 w-3/4 items-center md:items-start 
+    justify-around self-center gap-8 text-center md:text-left"
+  >
+    <div class="flex flex-[2] flex-col gap-4">
+      <h2 class="uppercase font-bold flex gap-2 justify-center md:justify-start 
+        items-center text-nowrap"
+      >
         <svg class="h-5 w-5" 
           viewBox="0 0 48 48" version="1.1" 
           xmlns="http://www.w3.org/2000/svg" 
@@ -47,12 +51,12 @@
         </svg>
         <span>E-Cart Shop</span>
       </h2>
-      <div class="row-start-2 row-span-full">
+      <div class="max-w-sm">
         Buy the products you love & Sell the products that you once loved.
       </div>
     </div>
 
-    <section class="flex flex-1 flex-col gap-4">
+    <section class="hidden xl:flex flex-[1] flex-col gap-4">
       <h2 class="uppercase font-bold">Products</h2>
       <nav>
         <ul class="flex flex-col gap-4">
@@ -66,7 +70,7 @@
       </nav>
     </section>
 
-    <section class="flex flex-1 flex-col gap-4">
+    <section class="hidden md:flex flex-[1] flex-col gap-4">
       <h2 class="uppercase font-bold">Useful Links</h2>
       <nav>
         <ul class="flex flex-col gap-4">
@@ -77,10 +81,10 @@
       </nav>
     </section>
 
-    <section class="flex flex-1 flex-col gap-4">
+    <section class="flex flex-[1] flex-col gap-4">
       <h2 class="uppercase font-bold">Contact</h2>
       <div>
-        <ul class="flex flex-col gap-4">
+        <ul class="flex flex-col gap-4 items-center md:items-start">
           <li>
             <div class="flex gap-2">
               <span>
@@ -134,7 +138,7 @@
 
   </div>
 
-  <div class="flex items-center justify-center p-4">
+  <div class="flex text-center items-center justify-center p-4">
     © {{getCurrentYear}} Copyright: Deesa Consulting Services 
   </div>
 

@@ -1,14 +1,30 @@
 {{define "Header"}}
-<header class="w-full h-16 bg-zinc-800 text-white flex items-center gap-10 px-4 py-8">
-  <h1 class="text-2xl font-bold cursor-pointer"><a href="/">E-Cart Shop</a></h1>
-  <nav class="flex flex-1">
-    <ul class="flex gap-4">
+<header data-signals:_header.expand="false"
+  class="w-full bg-zinc-800 text-white flex flex-col md:flex-row items-start 
+    md:items-center gap-8 p-4"
+>
+  <!-- Main header (Name and hamburger) -->
+  <h1 class="text-2xl font-bold cursor-pointer flex w-full md:w-auto">
+    <a href="/">E-Cart Shop</a>
+    <span 
+      data-on:click__debounce.100ms="$_header.expand = !$_header.expand"
+      class="flex md:hidden items-center justify-center ml-auto cursor-pointer"
+    >
+      <svg class="h-5 w-5 fill-current" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><title>icn/menu</title><path d="M2 3h12a1 1 0 0 1 0 2H2a1 1 0 1 1 0-2m0 4h12a1 1 0 0 1 0 2H2a1 1 0 1 1 0-2m0 4h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2"/></svg>
+    </span>
+  </h1>
+
+  <!-- Quick nav links -->
+  <nav class="flex md:!flex" data-show="$_header.expand">
+    <ul class="flex flex-col md:flex-row gap-4">
       <a href="/" class="cursor-pointer">Home</a>
       <a href="/products" class="cursor-pointer">Products</a>
       <a href="/contact" class="cursor-pointer">Contact</a>
     </ul>
   </nav>
-  <div class="flex items-center gap-4">
+
+  <!-- Login, Register, Logout, Cart, My Products -->
+  <div class="md:ml-auto flex md:!flex flex-wrap items-center gap-4" data-show="$_header.expand">
     <!-- LOGIN -->
     <a class="flex items-center gap-1 cursor-pointer" href="/login" data-show="$user.id == 0">
       <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 32 32" version="1.1" 

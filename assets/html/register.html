@@ -1,7 +1,7 @@
 {{define "Register"}}
 <main class="flex flex-col flex-1" id="main">
   <form 
-    class="flex flex-col gap-4 mx-16 my-4" 
+    class="flex flex-col gap-4 mx-auto container p-5" 
     data-signals="{
       register: {
         touched: {name: false, email: false, password: false},
@@ -82,7 +82,7 @@
       data-class="{ [$register._formMessageStyle]: true }"
     ></span>
 
-    <div class="flex text-gray-50 gap-2">
+    <div class="flex flex-wrap text-gray-50 gap-2">
       <button type="button"
         data-signals:register._disabled="true"
         data-attr:disabled="$register._disabled"

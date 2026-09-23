@@ -1,6 +1,6 @@
 {{define "ProductPage"}}
 <main class="flex flex-col flex-1" id="main">
-  <div class="flex mx-16 my-8">
+  <div class="flex flex-col md:flex-row mx-auto container p-5 gap-8 mt-10">
     <!-- Product Image -->
     <div class="flex flex-1 justify-center">
       <img alt="{{.Product.Title}}" class="max-h-[500px]" src="{{.Product.Image}}" />
@@ -8,14 +8,16 @@
 
     <!-- Product details -->
     <div class="flex flex-1 flex-col gap-4">
-      <div class="flex gap-2 font-medium text-gray-600/80 text-2xl uppercase">
+      <div class="flex flex-wrap gap-2 font-medium text-gray-600/80 text-2xl uppercase">
         <span>{{.Product.Category}}</span>
         <span>|</span>
         <a href="/merchant/{{.Product.SellerID}}">Merchant#: {{.Product.SellerID}}</a>
       </div>
 
       <span class="text-5xl font-light [word-spacing:12px]">{{.Product.Title}}</span>
-      <span class="text-gray-600/80 text-xl">{{.Product.StockCount}} left in stock</span>
+      <span class="text-gray-600/80 text-xl {{if le .Product.StockCount 0}}text-red-600{{end}}">
+        {{.Product.StockCount}} left in stock
+      </span>
       <span class="font-bold text-4xl my-2">$ {{.Product.Price}}</span>
       <span class="text-gray-800/80 text-xl line-clamp-6">{{.Product.Description}}</span>
 
@@ -41,9 +43,9 @@
   </div>
 
   <!-- Recommended products -->
-  <div class="flex flex-col  mx-16 my-8 gap-4">
+  <div class="flex flex-col container mx-auto p-5 gap-4">
     <span class="text-lg italic text-gray-600">Similar Suggestions</span>
-    <div class="flex gap-4">
+    <div class="flex flex-wrap gap-4">
       {{range .Samples}}
         <div class="flex flex-col h-[25rem] w-[15rem] border border-gray-400/80 p-2 gap-4">
           <img src="{{.Image}}" class="w-[8rem] h-[10rem] m-auto" />

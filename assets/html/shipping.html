@@ -3,11 +3,11 @@
   class="flex flex-col flex-1" id="main"
   data-signals="{_shipping: {selected: 'address'}}"
 >
-  <div class="flex flex-col mx-16 my-2">
+  <div class="flex flex-col container mx-auto p-5">
     <div class="flex gap-2 items-center">
       <button 
-        class="p-4 hover:bg-gray-300 font-bold cursor-pointer flex 
-          items-center gap-2"
+        class="p-4 hover:bg-gray-300 font-bold cursor-pointer flex flex-col
+          md:flex-row items-center gap-2"
         data-on:click="$_shipping.selected = 'address'"
         data-class="{
           'text-blue-500': $_shipping.selected === 'address',
@@ -26,8 +26,8 @@
       <hr class="flex-1 border-t-1 border-gray-300" />
 
       <button 
-        class="p-4 hover:bg-gray-300 font-bold cursor-pointer flex 
-          items-center gap-2"
+        class="p-4 hover:bg-gray-300 font-bold cursor-pointer flex flex-col
+          md:flex-row items-center gap-2"
         data-on:click="$_shipping.form.elements.next.click()"
         data-class="{
           'text-blue-500': $_shipping.selected === 'payment',

@@ -1,17 +1,17 @@
 {{define "Merchant"}}
 <main class="flex-1" id="main">
   {{if .Offerings}}
-    <div class="flex flex-col mx-16 my-2">
+    <div class="flex flex-col p-5 mx-auto container">
     <h2 class="text-3xl font-medium">Product Listings</h2> 
     <table class="mb-4">
       <thead>
         <tr class="border-gray-200 border-b">
           <th class="text-left p-2">Image</th>
           <th class="text-left p-2">Product Name</th>
-          <th class="text-left p-2">Description</th>
-          <th class="text-left p-2">Category</th>
-          <th class="text-left p-2 text-nowrap">In Stock</th>
-          <th class="text-left p-2">Price</th>
+          <th class="text-left p-2 hidden lg:table-cell">Description</th>
+          <th class="text-left p-2 hidden lg:table-cell">Category</th>
+          <th class="text-left p-2 text-nowrap hidden md:table-cell">In Stock</th>
+          <th class="text-left p-2 {{if $.Editable}}hidden sm:table-cell{{end}}">Price</th>
           {{if $.Editable}}
             <th class="text-left p-2">Update</th>
           {{end}}
@@ -21,22 +21,27 @@
         {{range .Offerings}}
           <tr id="product-[{{.ID}}]" class="border-gray-200 border-b align-top">
             <td class="p-2">
-              <a href="/product/{{.ID}}" class="flex items-center w-24">
+              <a href="/product/{{.ID}}" class="flex items-center w-12 md:w-16 lg:w-24">
                 <img src="{{.Image}}" class="object-contain border-gray-200 
                   rounded-md border" />
               </a>
             </td>
-            <td class="p-2"><a href="/product/{{.ID}}">{{.Title}}</a></td>
-            <td class="p-2">{{.Description}}</td>
-            <td class="p-2">{{.Category}}</td>
-            <td class="p-2">{{.StockCount}}</td>
-            <td class="p-2 text-nowrap">$ {{.Price}}</td>
+            <td class="p-2 
+              {{if le .StockCount 0}}text-red-600 font-medium{{end}}
+            "><a href="/product/{{.ID}}">{{.Title}}</a></td>
+            <td class="p-2 hidden lg:table-cell">{{.Description}}</td>
+            <td class="p-2 hidden lg:table-cell">{{.Category}}</td>
+            <td class="p-2 hidden md:table-cell 
+              {{if le .StockCount 0}}text-red-600 font-medium{{end}}
+            ">{{.StockCount}}</td>
+            <td class="p-2 text-nowrap {{if $.Editable}}hidden sm:table-cell{{end}}"
+            >$ {{.Price}}</td>
             {{if $.Editable}}
-              <td class="p-2 flex gap-2">
+              <td class="p-2 flex flex-col sm:flex-row gap-2">
                 <button title="Edit" 
                   data-on:click="@post('/api/product', {payload: {pid: {{.ID}}}})" 
                   class="border border-gray-600 rounded-md p-2 hover:bg-gray-800
-                    hover:text-white cursor-pointer"
+                    hover:text-white cursor-pointer flex items-center justify-center"
                 >
                   <svg fill="currentColor" class="h-3 w-3" xmlns="http://www.w3.org/2000/svg" 
                     viewBox="0 0 1200 1200" xml:space="preserve"
@@ -45,8 +50,8 @@
                   </svg>
                 </button>
                 <button title="Delete" 
-                  class="border rounded-md p-2 text-red-500
-                    hover:bg-red-500 hover:text-white cursor-pointer"
+                  class="border rounded-md p-2 text-red-500 hover:bg-red-500 
+                    hover:text-white cursor-pointer flex items-center justify-center"
                   data-on:click="
                     confirm(
                       'Your customers would no longer be able to see this Product. ' + 
@@ -69,7 +74,7 @@
 
     {{if .Editable}}
       <button data-on:click="@post('/api/product', {payload: {}})" 
-        class="w-96 py-1 px-2 border rounded-md cursor-pointer 
+        class="max-w-96 w-full py-1 px-2 border rounded-md cursor-pointer 
           hover:bg-zinc-800 hover:text-white mx-auto mt-4 text-center"
       >List another product</button>
     {{end}}

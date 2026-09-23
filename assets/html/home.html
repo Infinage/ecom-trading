@@ -68,14 +68,17 @@
 <main class="flex flex-col flex-1" id="main">
   {{if .ShowHero}}
   <!-- Hero Section -->
-  <div class="bg-zinc-800 flex p-4 text-white justify-between">
-    <div class="flex flex-col">
-      <span class="uppercase text-6xl font-bold">Celebrate Christmas Eve</span>
-      <span class="uppercase text-3xl [word-spacing:10px] leading-relaxed font-light">
-        Buyings products you like
-      </span>
+  <div class="bg-zinc-800 flex flex-col md:flex-row p-4 text-white justify-between gap-4">
+    <div class="flex-1 flex flex-col">
+      <span class="uppercase text-4xl sm:text-5xl md:text-6xl font-bold"
+      >Celebrate Christmas Eve</span>
+      <span class="uppercase text-3xl sm:text-4xl md:text-3xl [word-spacing:10px] 
+        leading-relaxed font-light"
+      >Buyings products you like</span>
     </div>
-    <img src="/assets/images/home.svg" class="h-96"/>
+    <div class="flex-1 flex justify-start md:justify-end">
+      <img src="/assets/images/home.svg" class="w-full h-auto max-w-xl" />
+    </div>
   </div>
   {{end}}
 
