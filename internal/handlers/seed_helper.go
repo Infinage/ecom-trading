@@ -2,18 +2,14 @@ package handlers
 
 import (
 	"context"
+	"embed"
 	"log"
-	"os"
 
 	"github.com/infinage/ecom-trading/internal/models"
 )
 
-func SeedDB(ctx context.Context, st *models.Store) {
-	if err := st.Init(ctx); err != nil {
-		log.Fatalf("DB init fail: %v", err)
-	}
-
-	f, err := os.Open("assets/data/seed.json")
+func SeedDB(ctx context.Context, st *models.Store, assets embed.FS) {
+	f, err := assets.Open("assets/data/seed.json")
 	if err != nil {
 		log.Fatalf("Failed to open seed file: %v", err)
 	}

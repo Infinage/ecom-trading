@@ -33,8 +33,13 @@ func NewApp(dbpath string, assets embed.FS, seedDB bool) (*App, error) {
 		return nil, fmt.Errorf("db load fail: %w", err)
 	}
 
+	ctx := context.Background()
+	if err := st.Init(ctx); err != nil {
+		return nil, fmt.Errorf("DB init fail: %v", err)
+	}
+
 	if seedDB {
-		SeedDB(context.Background(), st)
+		SeedDB(ctx, st, assets)
 	}
 
 	// Enable access to defined helpers
